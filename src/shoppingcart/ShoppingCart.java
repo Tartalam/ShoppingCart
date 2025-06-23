@@ -1,23 +1,25 @@
+package shoppingcart;
+
 import java.io.*;
 import java.util.*;
 
-public class shoppingcart {
+public class ShoppingCart {
   
     private Stack<CartOperation> operationStack = new Stack<>();
     private Map<Integer, Integer> cart = new HashMap<>();
-    private Map<Integer, product> catalog;
+    private Map<Integer, Product> catalog;
 
     private static final String CART_FILE = "cart.ser";
     private static final String STACK_FILE = "stack.ser";
 
-    public shoppingcart(Map<Integer, product> catalog){
+    public ShoppingCart(Map<Integer, Product> catalog){
         this.catalog = catalog;
         loadFromFile();
     }
 
     public void addToCart(int productId, int quantity){
 
-        product productItem = catalog.get(productId);
+        Product productItem = catalog.get(productId);
         if(productItem == null || productItem.getStock() < quantity){
             System.out.println("INVALID PRODUCT OR INSUFFICIENT STOCK");
             return;
@@ -79,7 +81,7 @@ public class shoppingcart {
 
         System.out.println("Cart Contents:");
         for (Map.Entry<Integer, Integer> entry : cart.entrySet()){
-            product productItem = catalog.get(entry.getKey());
+            Product productItem = catalog.get(entry.getKey());
             System.out.println(productItem.getName() + " X "+ entry.getValue() + " ($" + productItem.getPrice() + ")" );
         }
     }

@@ -1,6 +1,7 @@
+package shoppingcart;
 import java.io.Serializable;
 
-public class product implements Serializable {
+public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -10,7 +11,7 @@ public class product implements Serializable {
     private double price;
     private int stock;
 
-    public product (int id, String name, String description, double price, int stock){
+    public Product (int id, String name, String description, double price, int stock){
         this.id = id;
         this.name = name;
         this.description = description;
