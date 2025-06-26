@@ -109,6 +109,51 @@ while (curr != null){
 return isFound; 
 } 
 
+public boolean updateNode(int productId, ProductCat updatedProduct, String fileName) {
+    Node current = head;
+    boolean updated = false;
+
+    while (current != null) {
+        if (current.getProduct().getProductId() == productId) {
+            current.getProduct().setName(updatedProduct.getName());
+            current.getProduct().setDescription(updatedProduct.getDescription());
+            current.getProduct().setPrice(updatedProduct.getPrice());
+            current.getProduct().setStockQuantity(updatedProduct.getStockQuantity());
+            updated = true;
+            break;
+        }
+        current = current.getNextNode();
+    }
+
+    if (updated) {
+        // Build updated list for saving
+        java.util.LinkedList<String[]> productList = new java.util.LinkedList<>();
+        Node temp = head;
+        while (temp != null) {
+            ProductCat p = temp.getProduct();
+            String[] record = new String[]{
+                String.valueOf(p.getProductId()),
+                p.getName(),
+                p.getDescription(),
+                String.valueOf(p.getPrice()),
+                String.valueOf(p.getStockQuantity())
+            };
+            productList.add(record);
+            temp = temp.getNextNode();
+        }
+
+        // Write to file
+        FileManagement fm = new FileManagement();
+        fm.UpdateObjectsInFile(fileName, productList);
+
+        System.out.println("Product updated and saved successfully!");
+    } else {
+        System.out.println("Product with ID " + productId + " not found.");
+    }
+
+    return updated;
+}
+
 
 public void displayList() 
 { 
