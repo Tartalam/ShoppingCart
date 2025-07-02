@@ -21,7 +21,6 @@ class AVL {
 
         public Node() {// default constructor
             this.data = null;// new Product(); // initialize data with a new Product object
-          //  this.id = 0;
             this.left = null;
             this.right = null;
             this.height = 1; // height of a new node is 1
@@ -29,7 +28,6 @@ class AVL {
 
         public Node(Product data) { // constructor to pass in Product data
             this.data = data; // assign the product data
-            //this.id = data.getId();
             this.left = null;
             this.right = null;
             this.height = 1; // height of a new node is 1
@@ -38,7 +36,6 @@ class AVL {
         public Node(int iD, String name, String description, double price, int stock) { // constructor to pass in
                                                                                         // Product data
             this.data = new Product(iD, name, description, price, stock); // assign the product data
-          //  this.id = data.getId();
             this.left = null;
             this.right = null;
             this.height = 1; // height of a new node is 1
@@ -78,10 +75,6 @@ class AVL {
         public void setHeight(int height) { // setter for height
             this.height = height;
         }
-
-        public int getId() {
-            return data.getId(); // method to get the ID of the product
-        }
     }
 
     private Node head; // point called head for the AVL tree
@@ -101,15 +94,11 @@ class AVL {
             return node;
         }
         if (data.getId() < head.getData().getId()) {
-            // if data's ID is less than head's(base node) id, insertProduct into left
-            // subtree of
-            // base node
+            // if data's ID is less than head's(base node) id, insertProduct into leftsubtree of base node
             head.left = insertProduct(data, head.left);
         }
         if (data.getId() > head.getData().getId()) {
-            // if data's ID is greater than head's(base node) id, insertProduct into right
-            // subtree
-            // of base node
+            // if data's ID is greater than head's(base node) id, insertProduct into rightsubtree of base node
             head.right = insertProduct(data, head.right);
         }
         head.height = Math.max(head.getHeight(head.left), head.getHeight(head.right)) + 1; // update height of the node
@@ -176,16 +165,16 @@ class AVL {
 
     public Node leftRotate(Node child) {
 
-        Node p = child.right;
-        Node t = p.left;
+        Node p = child.right;// right child of child
+        Node t = p.left; // left child of parent
 
-        p.left = child;
-        child.right = t;
+        p.left = child; // child becomes parent
+        child.right = t; // left child of parent becomes right child of child
 
-        p.height = Math.max(child.getHeight(p.left), child.getHeight(p.right)) + 1;
-        child.height = Math.max(child.getHeight(child.left), child.getHeight(child.right)) + 1;
+        p.height = Math.max(child.getHeight(p.left), child.getHeight(p.right)) + 1;// update height
+        child.height = Math.max(child.getHeight(child.left), child.getHeight(child.right)) + 1;// update height
 
-        return p;
+        return p;// return the new parent
     }
 
     // Search for a productID
@@ -284,7 +273,7 @@ class AVL {
             if (choice == 'y' || choice == 'Y') {
                 idChange = input.nextInt();
             }
-        } while (choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N');
+        } while (choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N');// loop until user input is valid
 
         while (validInput==false) {
             try {
