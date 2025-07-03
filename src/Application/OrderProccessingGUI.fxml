@@ -136,7 +136,7 @@
                               <Font name="Arial Rounded MT Bold" size="16.0" />
                            </font>
                         </Button>
-                        <Hyperlink alignment="CENTER" layoutX="102.0" layoutY="401.0" onMouseClicked="#switchToMainPage" prefHeight="23.0" prefWidth="49.0" text="Home" underline="true">
+                        <Hyperlink alignment="CENTER" layoutX="102.0" layoutY="401.0" onMouseClicked="#switchToProductManagementPage" prefHeight="23.0" prefWidth="49.0" text="Return" underline="true">
                            <font>
                               <Font name="Arial" size="13.0" />
                            </font>

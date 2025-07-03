@@ -38,11 +38,19 @@
                   <Font name="Arial Rounded MT Bold" size="15.0" />
                </font>
             </Button>
-            <Hyperlink alignment="CENTER" layoutX="46.0" layoutY="644.0" onMouseClicked="#switchToMainPage" prefHeight="47.0" prefWidth="143.0" text="Return" textFill="WHITE" underline="true">
+            <Hyperlink alignment="CENTER" layoutX="46.0" layoutY="644.0" onMouseClicked="#switchToMainPage" prefHeight="47.0" prefWidth="143.0" text="Return" textFill="WHITE" underline="true" AnchorPane.bottomAnchor="14.0">
                <font>
                   <Font size="20.0" />
                </font>
             </Hyperlink>
+            <Button layoutX="6.0" layoutY="138.0" mnemonicParsing="false" onMouseClicked="#switchToOrderProccessingPage" prefHeight="46.0" prefWidth="230.0" style="-fx-background-color: #6F7A8A;" text="Queue">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="15.0" />
+               </font>
+            </Button>
          </children>
       </AnchorPane>
    </left>
