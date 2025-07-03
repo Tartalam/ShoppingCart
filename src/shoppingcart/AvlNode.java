@@ -13,7 +13,6 @@ class AVL {
     private final Scanner input = new Scanner(System.in);
     // Node class for AVL tree
     public class Node {
-        //private int id;// product id
         private Product data; // product object
         private Node left; // left child
         private Node right; // right child
