@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="1087.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="1087.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.SceneController">
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -123,7 +123,7 @@
                               <Font name="Arial Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Hyperlink layoutX="104.0" layoutY="345.0" text="Home" textFill="#a11212" underline="true" />
+                        <Hyperlink layoutX="104.0" layoutY="345.0" onMouseClicked="#switchToMainPage" text="Home" textFill="#a11212" underline="true" />
                      </children>
                   </Pane>
                </children>

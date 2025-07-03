@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="788.0" prefWidth="1093.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="788.0" prefWidth="1093.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.SceneController">
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -113,12 +113,19 @@
                   <Font name="Arial" size="14.0" />
                </font>
             </TextField>
-            <Button layoutX="567.0" layoutY="43.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="476.0">
+            <Button contentDisplay="GRAPHIC_ONLY" layoutX="567.0" layoutY="43.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="476.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/icons8-search-50.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
-            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="979.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="47.0">
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="979.0" layoutY="27.0" onMouseClicked="#switchToCartPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="47.0">
                <image>
                   <Image url="@../images/shopping-cart.png" />
                </image>
@@ -126,7 +133,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="879.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="142.0">
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="879.0" layoutY="27.0" onMouseClicked="#switchToLoginPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="142.0">
                <image>
                   <Image url="@../images/user.png" />
                </image>
@@ -146,7 +153,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="736.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="285.0">
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="736.0" layoutY="27.0" onMouseClicked="#switchToResetPasswordPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="285.0">
                <image>
                   <Image url="@../images/reset-password.png" />
                </image>
@@ -154,7 +161,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="642.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="379.0">
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="642.0" layoutY="27.0" onMouseClicked="#switchToProductManagementPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="379.0">
                <image>
                   <Image url="@../images/project.png" />
                </image>

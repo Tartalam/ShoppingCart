@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="924.0" prefWidth="997.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="924.0" prefWidth="997.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.SceneController">
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: DBDDDF;" BorderPane.alignment="CENTER">
          <children>
@@ -68,14 +68,14 @@
                                     <Font size="15.0" />
                                  </font>
                               </Label>
-                              <Button layoutX="28.0" layoutY="529.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A;" text="Sign In" textFill="WHITE">
+                              <Button layoutX="28.0" layoutY="529.0" mnemonicParsing="false" onMouseClicked="#switchToLoginPage" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A;" text="Sign In" textFill="WHITE">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                                  <font>
                                     <Font name="Arial Black" size="15.0" />
                                  </font></Button>
-                              <Hyperlink layoutX="28.0" layoutY="439.0" prefHeight="23.0" prefWidth="92.0" text="Return" textFill="#1c5dc6" underline="true">
+                              <Hyperlink layoutX="28.0" layoutY="439.0" onMouseClicked="#switchToMainPage" prefHeight="23.0" prefWidth="92.0" text="Return" textFill="#1c5dc6" underline="true">
                                  <font>
                                     <Font name="Arial" size="14.0" />
                                  </font>

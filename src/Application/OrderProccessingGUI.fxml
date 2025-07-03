@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="683.0" prefWidth="1052.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="683.0" prefWidth="1052.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.SceneController">
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: grey;" BorderPane.alignment="CENTER">
          <children>
@@ -135,6 +136,11 @@
                               <Font name="Arial Rounded MT Bold" size="16.0" />
                            </font>
                         </Button>
+                        <Hyperlink alignment="CENTER" layoutX="102.0" layoutY="401.0" onMouseClicked="#switchToMainPage" prefHeight="23.0" prefWidth="49.0" text="Home" underline="true">
+                           <font>
+                              <Font name="Arial" size="13.0" />
+                           </font>
+                        </Hyperlink>
                      </children>
                   </Pane>
                </children>

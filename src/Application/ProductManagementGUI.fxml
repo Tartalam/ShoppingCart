@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.0" prefWidth="965.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.0" prefWidth="965.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.SceneController">
    <left>
       <AnchorPane prefHeight="705.0" prefWidth="229.0" style="-fx-background-color: #6E7886;" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="2.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="230.0" style="-fx-background-color: #6E7886;" text="Add Product">
+            <Button layoutX="2.0" mnemonicParsing="false" onAction="#switchToAddProductPage" prefHeight="46.0" prefWidth="230.0" style="-fx-background-color: #6E7886;" text="Add Product">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -21,15 +21,7 @@
                   <Font name="Arial Rounded MT Bold" size="15.0" />
                </font>
             </Button>
-            <Button layoutX="2.0" layoutY="46.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="230.0" style="-fx-background-color: #6E7886;" text="Remove Product">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Button>
-            <Button layoutX="2.0" layoutY="92.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="230.0" style="-fx-background-color: #6E7886;" text="Update Product">
+            <Button layoutX="2.0" layoutY="46.0" mnemonicParsing="false" onAction="#switchToDeleteProductPage" prefHeight="46.0" prefWidth="230.0" style="-fx-background-color: #6E7886;" text="Remove Product">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -37,7 +29,15 @@
                   <Font name="Arial Rounded MT Bold" size="15.0" />
                </font>
             </Button>
-            <Hyperlink alignment="CENTER" layoutX="46.0" layoutY="658.0" prefHeight="47.0" prefWidth="143.0" text="Return" textFill="WHITE" underline="true">
+            <Button layoutX="2.0" layoutY="92.0" mnemonicParsing="false" onAction="#switchToUpdateProductPage" prefHeight="46.0" prefWidth="230.0" style="-fx-background-color: #6E7886;" text="Update Product">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="15.0" />
+               </font>
+            </Button>
+            <Hyperlink alignment="CENTER" layoutX="46.0" layoutY="658.0" onMouseClicked="#switchToMainPage" prefHeight="47.0" prefWidth="143.0" text="Return" textFill="WHITE" underline="true">
                <font>
                   <Font size="20.0" />
                </font>
