@@ -406,9 +406,8 @@ class AVL {
     public static void main(String[] args) {
         AVL avl = new AVL();
         //test with user input
-        avl.mainMenu();
-        /*test without user input 
-        // Manually create product objects
+        //avl.mainMenu();
+       // test without user input Manually create product objects
         Product p1 = new Product(30, "Mouse", "Wireless optical mouse", 25.99, 100);
         Product p2 = new Product(10, "Keyboard", "Mechanical keyboard", 89.99, 50);
         Product p3 = new Product(20, "Monitor", "24 inch LED monitor", 149.99, 25);
@@ -449,7 +448,7 @@ class AVL {
 
         // Final display
         System.out.println("\n=== Final AVL Tree ===");
-        avl.display(); */
+        avl.display();
     }
         
 
