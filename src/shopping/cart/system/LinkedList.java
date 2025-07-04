@@ -1,3 +1,4 @@
+
 package shopping.cart.system;
 
 public class LinkedList {
@@ -17,68 +18,71 @@ public class LinkedList {
 		this.head = head;
 	}
 	public void insertAtFront(ProductCat productToInsert) {
-		Node temp;
-		temp = new Node();
-		if(temp != null) {
-			temp.setProduct(productToInsert);
-			temp.setNextNode(null);
-			
-		if(head == null) {
-			head = temp;
+        try{
+            Node temp;
+		    temp = new Node();
+            if(temp != null) {
+                temp.setProduct(productToInsert);
+                temp.setNextNode(null);
+                
+            if(head == null) {
+                head = temp;
+            }
+            else {
+                temp.setNextNode(head);
+                head = temp;
+            }
 		}
-		else {
-			temp.setNextNode(head);
-			head = temp;
-		}
-		}
-	else {
+	}catch (Exception e)  {
 		System.err.println("Error! List is full. Cannot add a new node");
 	}
 }
 
 public void insertAtBack(ProductCat productToInsert) {
-	Node temp1;
-	temp1 = new Node();
-	if(temp1 != null) {
-		temp1.setProduct(productToInsert);
-		temp1.setNextNode(null);
-		
-		if(head == null) {
-			head = temp1;
-		}
-		else {
-			Node temp2 = head;
-			while(temp2.getNextNode() != null){
-				temp2 = temp2.getNextNode();
-				}
-		temp2.setNextNode(temp1);
-	 } 
-	}
-    
-else{ 
-    System.err.println("Error! List is full (Out of Memory), can NOT add a new node"); 
-} 
+	try{
+        Node temp1;
+        temp1 = new Node();
+            if(temp1 != null) {
+                temp1.setProduct(productToInsert);
+                temp1.setNextNode(null);
+                
+                if(head == null) {
+                    head = temp1;
+                }
+                else {
+                    Node temp2 = head;
+                    while(temp2.getNextNode() != null){
+                        temp2 = temp2.getNextNode();
+                        }
+                temp2.setNextNode(temp1);
+            } 
+        }
+        
+    }catch (Exception e) {
+        System.err.println("Error! List is full (Out of Memory), can NOT add a new node"); 
+    } 
 } 
 
 
 public void insertAtBack(int productId, String name, String description, double price, int stockQuantity) { 
-Node temp1 = new Node(productId, name, description, price, stockQuantity);
-if(temp1 != null){ 
-    if(head == null){ 
-        head = temp1; 
-    } 
-    else{ 
-        Node temp2 = head;
-        while(temp2.getNextNode() !=  null) 
-        { 
-            temp2 = temp2.getNextNode();
-        } 
-        temp2.setNextNode(temp1);
-    }
-}
-else { 
+try{
+        Node temp1 = new Node(productId, name, description, price, stockQuantity);
+        if(temp1 != null){ 
+            if(head == null){ 
+                head = temp1; 
+            } 
+            else{ 
+                Node temp2 = head;
+                while(temp2.getNextNode() !=  null) 
+                { 
+                    temp2 = temp2.getNextNode();
+                } 
+                temp2.setNextNode(temp1);
+            }
+        }
+    }catch (Exception e){ 
    System.err.println("Error! List is full (Out of Memory), can NOT add a new node"); 
-} 
+    } 
 } 
 
 
@@ -162,7 +166,7 @@ while (curr != null){
     System.out.print(curr.getProduct() + "\n"); 
     curr = curr.getNextNode(); 
 } 
-System.out.println("NULL"); 
+System.out.println("\nNo more elements in list."); 
 } 
 
 
