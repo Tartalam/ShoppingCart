@@ -1,4 +1,4 @@
-package project;
+package Application;
 
 import java.io.*;
 import java.security.MessageDigest;

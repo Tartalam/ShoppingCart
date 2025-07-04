@@ -1,4 +1,4 @@
-package shoppingcart;
+package Application;
 import java.io.Serializable;
 
 public class CartOperation implements Serializable{

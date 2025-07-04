@@ -7,7 +7,7 @@
   Description: AVL class is used to create a bineary search tree for easy lookup and modification(including delete, add and removal) of data
                 one a new product is added or deleted the tree is rebalanced for optimal performance
 */
-package shopping.cart.system;
+package Application;
 
 import java.util.Scanner;
 
