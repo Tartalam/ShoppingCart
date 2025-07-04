@@ -133,7 +133,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="879.0" layoutY="27.0" onMouseClicked="#switchToLoginPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="142.0">
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="902.0" layoutY="27.0" onMouseClicked="#switchToLoginPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="119.0">
                <image>
                   <Image url="@../images/user.png" />
                </image>
@@ -145,7 +145,7 @@
                <font>
                   <Font name="Bodoni MT" size="18.0" />
                </font></Label>
-            <Label alignment="CENTER" layoutX="866.0" layoutY="100.0" prefHeight="23.0" prefWidth="99.0" text="user" AnchorPane.rightAnchor="128.0">
+            <Label alignment="CENTER" layoutX="889.0" layoutY="100.0" prefHeight="23.0" prefWidth="99.0" text="user" AnchorPane.rightAnchor="105.0">
                <font>
                   <Font name="Arial" size="12.0" />
                </font>
@@ -185,6 +185,15 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="824.0" layoutY="27.0" onMouseClicked="#switchToOrderProccessingPage" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/queue.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Label layoutX="842.0" layoutY="103.0" text="Queue" />
          </children>
       </AnchorPane>
    </top>

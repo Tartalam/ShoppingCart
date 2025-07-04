@@ -38,7 +38,7 @@
                   <Font name="Arial Rounded MT Bold" size="15.0" />
                </font>
             </Button>
-            <Hyperlink alignment="CENTER" layoutX="46.0" layoutY="644.0" onMouseClicked="#switchToMainPage" prefHeight="47.0" prefWidth="143.0" text="Return" textFill="WHITE" underline="true">
+            <Hyperlink alignment="CENTER" layoutX="46.0" layoutY="644.0" onMouseClicked="#switchToMainPage" prefHeight="47.0" prefWidth="143.0" text="Return" textFill="WHITE" underline="true" AnchorPane.bottomAnchor="14.0">
                <font>
                   <Font size="20.0" />
                </font>
