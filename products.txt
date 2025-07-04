@@ -1,0 +1,16 @@
+100,Monitor,24-inch Monitor,159.99,8
+101,Laptop,Gaming Laptop,999.99,5
+102,Headphones,Noise Cancelling,199.99,10
+103,Mouse,Wireless Mouse,29.99,50
+104,Mouse pad,10-inch Mouse Pad,19.99,15
+105,Keyboard,Mechanical RGB Keyboard,89.99,25
+106,Webcam,1080p HD USB Webcam,49.99,15
+107,USB-C Hub,6-in-1 Multiport Adapter,34.99,40
+108,Bluetooth Speaker,Waterproof portable speaker,59.99,20
+109,Power Bank,10000mAh portable charger,25.99,60
+110,Phone Case,Shockproof case for iPhone,14.99,100
+111,Wireless Earbuds,Noise-isolating Bluetooth earbuds,79.99,35
+112,Screen Protector,Tempered glass, 2-pack,9.99,200
+113,Printer,All-in-One Wireless Printer,149.99,10
+114,Desk Lamp,LED Lamp with USB Charging Port,29.99,30
+115,Notebook,College-ruled spiral notebook,3.99,150
