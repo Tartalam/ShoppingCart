@@ -43,11 +43,16 @@ public class CatalogManager {
     }
 
     public void deleteProduct(int productId) {
+        avl.setHead(avl.deleteProduct(avl.getHead(), productId));// delete the product from the AVL tree
+        if (avl.getHead() == null) {
+            return;
+        }else{
         ProductCat removed = linkedList.deleteNode(productId);// delete the product from the linked list
-        if (removed != null) {
-            avl.setHead(avl.deleteProduct(avl.getHead(), productId));// delete the product from the AVL tree
+        if(avl.getHead().getData().getProductId() == removed.getProductId()) { // if the AVL root is the same as the removed product
+            System.out.println("Product #"+removed.getProductId()+"- "+removed.getName()+" has been removed from the catalog.");
         }
     }
+}
 
     public void updateProduct(int productId, ProductCat updatedProduct, String fileName) {
         linkedList.updateNode(productId, updatedProduct, fileName);
