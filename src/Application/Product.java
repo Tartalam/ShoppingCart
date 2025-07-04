@@ -76,9 +76,9 @@ public class Product implements Identifiable{
     
     @Override
     public String toString() {
-        return "\nProduct ID: " + productId + " \nName: " + name + 
-               "\nDescription: " + description + "\nPrice: " + price + 
-               "\tStock Quantity: " + stockQuantity;
+        return productId + "," + name + 
+               "," + description + "," + price + 
+               "," + stockQuantity;
     }
     
     @Override

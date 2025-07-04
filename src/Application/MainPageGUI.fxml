@@ -142,6 +142,15 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="798.0" layoutY="27.0" onMouseClicked="#switchToOrderProccessingPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="207.0">
+               <image>
+                  <Image url="@../images/queue.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Label layoutX="813.0" layoutY="103.0" text="Queue" />
          </children>
       </AnchorPane>
    </top>

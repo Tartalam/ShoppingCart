@@ -43,14 +43,6 @@
                   <Font size="20.0" />
                </font>
             </Hyperlink>
-            <Button layoutX="6.0" layoutY="138.0" mnemonicParsing="false" onMouseClicked="#switchToOrderProccessingPage" prefHeight="46.0" prefWidth="230.0" style="-fx-background-color: #6E7886;" text="Queue">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="15.0" />
-               </font>
-            </Button>
          </children>
       </AnchorPane>
    </left>

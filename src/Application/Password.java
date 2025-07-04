@@ -1,9 +1,14 @@
 package Application;
 
 public class Password implements Identifiable {
+	
+	// enum class for user login
+	public enum LoginStatus{ADMIN, USER, NO_USER}
+	
     private String firstName;
     private String lastName;
     private String email;
+    private LoginStatus userType;
     private String password;
     private String confirmPassword;
     
@@ -17,15 +22,17 @@ public class Password implements Identifiable {
         this.email = "";
         this.password = "";
         this.confirmPassword = "";
+        this.userType = LoginStatus.NO_USER;
     }
     
     public Password(String firstName, String lastName, String email, 
-                   String password, String confirmPassword) {
+                   String password, String confirmPassword, LoginStatus userType) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
+        this.userType = userType;
     }
     
     public Password(Password password) {
@@ -34,6 +41,7 @@ public class Password implements Identifiable {
         this.email = password.email;
         this.password = password.password;
         this.confirmPassword = password.confirmPassword;
+        this.userType = password.userType;
     }
 
     // Getters and Setters
@@ -47,7 +55,8 @@ public class Password implements Identifiable {
     public void setPassword(String password) { this.password = password; }
     public String getConfirmPassword() { return confirmPassword; }
     public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
-    
+    public LoginStatus getUserType() {return userType;}
+    public void setUSerType(LoginStatus userType) {this.userType = userType;}
     @Override
     public boolean matchByIdOrPassword(Object identifier) {
         if (identifier instanceof String) {
@@ -97,8 +106,8 @@ public class Password implements Identifiable {
     
     @Override
     public String toString() {
-        return "\nName: " + firstName + " " + lastName + 
-               "\nEmail: " + email + "\nPassword: " + password;
+        return firstName + "," + lastName + 
+               "," + email + "," + password;
     }
     
     @Override
