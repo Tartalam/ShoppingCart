@@ -15,7 +15,7 @@ class AVL {
     private final Scanner input = new Scanner(System.in);
     // Node class for AVL tree
     public class Node {
-        private ProductCat data; // product object
+        private Product data; // product object
         private Node left; // left child
         private Node right; // right child
         private int height; // height of the node
@@ -27,7 +27,7 @@ class AVL {
             this.height = 1; // height of a new node is 1
         }
 
-        public Node(ProductCat data) { // constructor to pass in Product data
+        public Node(Product data) { // constructor to pass in Product data
             this.data = data; // assign the product data
             this.left = null;
             this.right = null;
@@ -36,7 +36,7 @@ class AVL {
 
         public Node(int iD, String name, String description, double price, int stock) { // constructor to pass in
                                                                                         // Product data
-            this.data = new ProductCat(iD, name, description, price, stock); // assign the product data
+            this.data = new Product(iD, name, description, price, stock); // assign the product data
             this.left = null;
             this.right = null;
             this.height = 1; // height of a new node is 1
@@ -58,11 +58,11 @@ class AVL {
             this.right = right;
         }
 
-        public ProductCat getData() { // getter for data
+        public Product getData() { // getter for data
             return data;
         }
 
-        public void setData(ProductCat data) { // setter for data
+        public void setData(Product data) { // setter for data
             this.data = data;
         }
 
@@ -95,7 +95,7 @@ class AVL {
     }
 
 
-    public Node insertProduct(ProductCat data, Node head) { // method to insert a product into the AVL tree
+    public Node insertProduct(Product data, Node head) { // method to insert a product into the AVL tree
         if (head == null) {// if head is null,avl tree is empty, create a new node
             Node node = new Node(data);
             head = node; // assign the new node to position head
@@ -264,14 +264,14 @@ class AVL {
         // 1. Search for the product with the given id
         Node productFound = productSearch(node, id);
         if (productFound != null) {// 2. If product is found, modify the product details
-            ProductCat data = modifiedInput(productFound); // get the modified product details from user input
+            Product data = modifiedInput(productFound); // get the modified product details from user input
             productFound.setData(data); // set the modified product data to the node
         }
         return productFound; // return the node with the product found
     }
 
-    public ProductCat modifiedInput(Node node) {
-        ProductCat product = null;
+    public Product modifiedInput(Node node) {
+        Product product = null;
         int idChange = node.getData().getProductId();
         //char choice;
         boolean validInput = false;
@@ -298,7 +298,7 @@ class AVL {
                 if (name.isEmpty() || description.isEmpty() || price < 0 || stock < 0) {
                     System.out.println("Invalid input. Please try again.");
                 } else {
-                    product = new ProductCat(idChange, name, description, price, stock);// create a new product object with modifications done
+                    product = new Product(idChange, name, description, price, stock);// create a new product object with modifications done
                     node.setData(product); //set old object to new object contents
                     validInput = true;
                 }
@@ -343,8 +343,8 @@ public void displayTree(Node node, int level) {
     
 
 
-    public ProductCat acceptInput() {
-        ProductCat data = null;
+    public Product acceptInput() {
+        Product data = null;
         boolean validInput = false;
         
         while (validInput==false) 
@@ -364,7 +364,7 @@ public void displayTree(Node node, int level) {
                 if (name.isEmpty() || description.isEmpty() || price < 0 || stock < 0) {
                     System.out.println("Invalid input. Please try again.");
                 } else {
-                    data = new ProductCat(id, name, description, price, stock);
+                    data = new Product(id, name, description, price, stock);
                     validInput = true;
                 }    
         }
@@ -384,7 +384,7 @@ public void displayTree(Node node, int level) {
 
             switch (choice) {
                 case 1:// Add new product
-                    ProductCat data = acceptInput();
+                    Product data = acceptInput();
                     this.head = insertProduct(data, head);// insert the new product into the AVL tree and return the new head
                     break;
                 case 2:
