@@ -179,8 +179,8 @@ class AVL {
         p.left = child; // child becomes parent
         child.right = t; // left child of parent becomes right child of child
 
-        p.height = Math.max(child.getHeight(p.left), child.getHeight(p.right)) + 1;// update height
-        child.height = Math.max(child.getHeight(child.left), child.getHeight(child.right)) + 1;// update height
+        p.height = 1+Math.max(child.getHeight(p.left), child.getHeight(p.right));// update height
+        child.height =1+ Math.max(child.getHeight(child.left), child.getHeight(child.right));// update height
 
         return p;// return the new parent
     }
