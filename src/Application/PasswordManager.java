@@ -1,239 +1,187 @@
 package Application;
 
-import java.io.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import javax.mail.*;
-import javax.mail.internet.*;
+/**
+ * The PasswordManager class handles all password-related operations including:
+ * - User registration with OTP verification
+ * - Password setting and changes
+ * - User authentication (login)
+ * - Password recovery
+ * - Admin password management
+ */
+public class PasswordManager {
 
-//Main logic that handles registration, login, password change for user and admin tasks
-class PasswordManager {
- private Scanner scanner;
+    /**
+     * Registers a new customer by validating inputs, generating an OTP, and saving temporary user data.
+     * 
+     * @param firstName User's first name (must not be empty)
+     * @param lastName User's last name (must not be empty)
+     * @param email User's email (must contain "@" and ".")
+     * @return true if registration succeeds, false if inputs are invalid or user exists
+     */
+    public boolean registerCustomer(String firstName, String lastName, String email) {
+        // Step 1: Validate required fields
+        if (firstName.isEmpty() || lastName.isEmpty() || 
+            email.isEmpty() || !email.contains("@") || !email.contains(".")) {
+            return false;
+        }
 
-//Constructor initializes the scanner and ensures an admin user exists
- public PasswordManager() {
-     this.scanner = new Scanner(System.in);
-     initializeAdmin();
- }
+        // Step 2: Check if user already exists in the system
+        if (UserFileManager.loadUser(email) != null) {
+            return false;
+        }
 
-//Creates a default admin user if one doesn't already exist
- private void initializeAdmin() {
-     User admin = UserFileManager.loadUser("admin@system.com");
-     if (admin == null) {
-         admin = new User("Admin", "Root", "admin@system.com", "admin");
-         admin.setHashedPassword(PasswordUtils.hashPassword("admin"));
-         UserFileManager.saveUser(admin);
-     }
- }
+        // Step 3: Generate OTP and send via email
+        String otp = PasswordUtils.generateOTP();
+        if (Email.sendOTP(email, otp)) {
+            // Step 4: Save OTP to file for verification later
+            UserFileManager.saveOTP(email, otp);
+            
+            // Step 5: Create temporary user record (password will be set after OTP verification)
+            Password user = new Password(
+            	    firstName, lastName, email, 
+            	    "", "", Password.LoginStatus.USER, "", ""
+            	);
+            UserFileManager.saveUser(user);
+            return true;
+        }
+        return false;
+    }
 
- // Handles customer registration flow
- public boolean registerCustomer() {
- System.out.print("Enter first name: ");
- String firstName = scanner.nextLine().trim();
- if (firstName.isEmpty()) {
-     System.out.println("First name cannot be empty.");
-     return false;
- }
+    /**
+     * Verifies OTP and sets the user's password if validation passes.
+     * 
+     * @param email User's email for identification
+     * @param enteredOTP OTP entered by the user
+     * @param password New password to set
+     * @param confirmPassword Confirmation of new password
+     * @return Password object if successful, null if OTP or password is invalid
+     */
+    public Password verifyOTPAndSetPassword(String email, String enteredOTP, String password, String confirmPassword) {
+        // Step 1: Verify OTP matches what was sent to the user
+        if (!UserFileManager.verifyOTP(email, enteredOTP)) {
+            return null;
+        }
 
- System.out.print("Enter last name: ");
- String lastName = scanner.nextLine().trim();
- if (lastName.isEmpty()) {
-     System.out.println("Last name cannot be empty.");
-     return false;
- }
+        // Step 2: Load user from storage
+        Password user = UserFileManager.loadUser(email);
+        
+        // Step 3: Check password and confirmation match
+        if (user != null && password.equals(confirmPassword)) {
+            // Step 4: Hash password and update user record
+            user.setHashedPassword(PasswordUtils.hashPassword(password));
+            UserFileManager.saveUser(user);
+            return user;
+        }
+        return null;
+    }
 
- System.out.print("Enter email address: ");
- String email = scanner.nextLine().trim();
- if (email.isEmpty() || !email.contains("@") || !email.contains(".")) {
-     System.out.println("Invalid email address.");
-     return false;
- }
+    /**
+     * Authenticates a user (either admin or regular user) based on credentials.
+     * 
+     * @param email User's email (or admin username)
+     * @param password User's password
+     * @return Password object if authentication succeeds, null otherwise
+     */
+    public Password login(String email, String password) {
+        // Step 1: Handle admin login separately
+        if (email.equals(Password.ADMIN_USERNAME)) {
+            if (Password.verifyAdmin(email, password)) {
+            	return new Password(
+            		    "Admin", "Root", "admin@system.com",
+            		    "", "", Password.LoginStatus.ADMIN, 
+            		    PasswordUtils.hashPassword(password), ""
+            		);
+            }
+            return null;
+        }
 
- // Check if user already exists
- if (UserFileManager.loadUser(email) != null) {
-     System.out.println("User with this email already exists!");
-     return false;
- }
+        // Step 2: Handle regular user login
+        Password user = UserFileManager.loadUser(email);
+        if (user != null) {
+            // Check if user has set a password yet (new registrations)
+            if (user.getHashedPassword().isEmpty()) {
+                return null;
+            }
+            
+            // Verify password hash matches stored hash
+            if (user.getHashedPassword().equals(PasswordUtils.hashPassword(password))) {
+                return user;
+            }
+        }
+        return null;
+    }
 
- // Generate and send OTP for verification
- String otp = PasswordUtils.generateOTP();
- if (EmailService.sendOTP(email, otp)) {
-     UserFileManager.saveOTP(email, otp);
+    /**
+     * Allows users to change their password after verifying current credentials.
+     * 
+     * @param user The user changing their password
+     * @param currentPassword Current password for verification
+     * @param newPassword New password to set
+     * @param confirmPassword Confirmation of new password
+     * @return true if password was changed successfully, false otherwise
+     */
+    public boolean changePassword(Password user, String currentPassword, String newPassword, String confirmPassword) {
+        // Step 1: Verify current password is correct
+        if (!user.getHashedPassword().equals(PasswordUtils.hashPassword(currentPassword))) {
+            return false;
+        }
 
-     // Create user (password will be set after OTP verification)
-     User user = new User(firstName, lastName, email, "customer");
-     UserFileManager.saveUser(user);
+        // Step 2: Check if new password was used before (from history)
+        if (user.checkPasswordInHistory(PasswordUtils.hashPassword(newPassword))) {
+            return false;
+        }
 
-     System.out.println("Registration successful! OTP sent to your email.");
-     return true;
- } else {
-     System.out.println("Failed to send OTP. Registration failed.");
-     return false;
- }
+        // Step 3: Verify new password and confirmation match
+        if (newPassword.equals(confirmPassword)) {
+            // Step 4: Update password and save to file
+            user.setHashedPassword(PasswordUtils.hashPassword(newPassword));
+            UserFileManager.saveUser(user);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Handles password recovery by generating a new random password and emailing it.
+     * 
+     * @param firstName User's first name for identification
+     * @param lastName User's last name for identification
+     * @return true if password was reset and emailed successfully
+     */
+    public boolean forgotPassword(String firstName, String lastName) {
+        // Step 1: Find user by name
+        Password user = UserFileManager.findUserByName(firstName, lastName);
+        if (user != null) {
+            // Step 2: Generate a secure random password
+            String newPassword = PasswordUtils.generateRandomPassword();
+            
+            // Step 3: Email the new password to user
+            if (Email.sendNewPassword(user.getEmail(), newPassword)) {
+                // Step 4: Update password in system
+                user.setHashedPassword(PasswordUtils.hashPassword(newPassword));
+                UserFileManager.saveUser(user);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Allows administrators to reset passwords for regular users.
+     * 
+     * @param email Email of user whose password needs resetting
+     * @param newPassword New password to set
+     * @return true if password was reset successfully, false otherwise
+     */
+    public boolean adminChangeCustomerPassword(String email, String newPassword) {
+        // Step 1: Load user and verify they're a regular user (not admin)
+        Password customer = UserFileManager.loadUser(email);
+        if (customer != null && customer.getUserType() == Password.LoginStatus.USER) {
+            // Step 2: Update password directly (no current password required for admin)
+            customer.setHashedPassword(PasswordUtils.hashPassword(newPassword));
+            UserFileManager.saveUser(customer);
+            return true;
+        }
+        return false;
+    }
 }
-
-//Verifies the OTP entered by the user and allows them to set a password
- public User verifyOTPAndSetPassword(String email) {
-     System.out.print("Enter OTP sent to your email: ");
-     String enteredOTP = scanner.nextLine().trim();
-
-     if (UserFileManager.verifyOTP(email, enteredOTP)) {
-         System.out.println("OTP verified successfully!");
-         User user = UserFileManager.loadUser(email);
-         if (user != null) {
-             return setInitialPassword(user); // Sets password
-         }
-     } else {
-         System.out.println("Invalid or expired OTP!");
-     }
-     return null;
- }
-
-//Prompts the user to create and confirm a password
- private User setInitialPassword(User user) {
-     System.out.println("Please set your password:");
-     System.out.print("Enter new password: ");
-     String password = scanner.nextLine();
-     System.out.print("Confirm password: ");
-     String confirmPassword = scanner.nextLine();
-
-  // If passwords match, hash and save it
-     if (password.equals(confirmPassword)) {
-         user.setHashedPassword(PasswordUtils.hashPassword(password));
-         UserFileManager.updateUser(user);
-         System.out.println("Password set successfully!");
-         return user;
-     } else {
-         System.out.println("Passwords don't match!");
-         return setInitialPassword(user);
-     }
- }
-
-//Handles login for both admin and customers
- public User login() {
-     System.out.print("Enter email (or 'root' for admin): ");
-     String identifier = scanner.nextLine().trim();
-
-  // Admin login check
-     if (identifier.equals("root")) {
-         System.out.print("Enter password: ");
-         String password = scanner.nextLine();
-         User admin = UserFileManager.loadUser("admin@system.com");
-         if (admin != null && admin.getHashedPassword().equals(PasswordUtils.hashPassword(password))) {
-             System.out.println("Admin login successful!");
-             return admin;
-         } else {
-             System.out.println("Invalid admin credentials!");
-             return null;
-         }
-     }
-
-  // Customer login check
-     User user = UserFileManager.loadUser(identifier);
-     if (user != null) {
-         if (user.getHashedPassword() == null) {
-             System.out.println("Please complete registration by verifying OTP first.");
-             return verifyOTPAndSetPassword(identifier);
-         }
-
-         System.out.print("Enter password: ");
-         String password = scanner.nextLine();
-         if (user.getHashedPassword().equals(PasswordUtils.hashPassword(password))) {
-             System.out.println("Login successful!");
-             return user;
-         } else {
-             System.out.println("Invalid password!");
-         }
-     } else {
-         System.out.println("User not found!");
-     }
-     return null;
- }
-
-//Allows a logged-in user to change their password securely
- public boolean changePassword(User user) {
-     System.out.print("Enter current password: ");
-     String currentPassword = scanner.nextLine();
-     String hashedCurrent = PasswordUtils.hashPassword(currentPassword);
-
-  // Check if current password matches
-     if (!user.getHashedPassword().equals(hashedCurrent)) {
-         System.out.println("Current password is incorrect!");
-         return false;
-     }
-
-     System.out.print("Enter new password: ");
-     String newPassword = scanner.nextLine();
-     String hashedNew = PasswordUtils.hashPassword(newPassword);
-
-  // Prevent password reuse
-     if (hashedNew.equals(user.getHashedPassword()) || user.checkPasswordInHistory(hashedNew)) {
-         System.out.println("Cannot use previous passwords! Please choose a different password.");
-         return false;
-     }
-
-     System.out.print("Confirm new password: ");
-     String confirmPassword = scanner.nextLine();
-
-     if (newPassword.equals(confirmPassword)) {
-         user.setHashedPassword(hashedNew);
-         UserFileManager.updateUser(user);
-         System.out.println("Password changed successfully!");
-         return true;
-     } else {
-         System.out.println("Passwords don't match!");
-         return false;
-     }
- }
-
-//Handles the forgot password flow for users
- public boolean forgotPassword() {
-     System.out.print("Enter first name: ");
-     String firstName = scanner.nextLine().trim();
-     System.out.print("Enter last name: ");
-     String lastName = scanner.nextLine().trim();
-
-  // Try to find the user by name
-     User user = UserFileManager.findUserByName(firstName, lastName);
-     if (user != null) {
-         String newPassword = PasswordUtils.generateRandomPassword();
-         String hashedNew = PasswordUtils.hashPassword(newPassword);
-
-      // Send the new password via email
-         if (EmailService.sendNewPassword(user.getEmail(), newPassword)) {
-             user.setHashedPassword(hashedNew);
-             UserFileManager.updateUser(user);
-             System.out.println("New password sent to your email address!");
-             return true;
-         } else {
-             System.out.println("Failed to send email!");
-         }
-     } else {
-         System.out.println("User not found!");
-     }
-     return false;
- }
-
-//Allows the admin to reset a customer’s password manually
- public boolean adminChangeCustomerPassword() {
-     System.out.print("Enter customer email: ");
-     String email = scanner.nextLine().trim();
-
-     User customer = UserFileManager.loadUser(email);
-     if (customer != null && customer.getUserType().equals("customer")) {
-         System.out.print("Enter new password for customer: ");
-         String newPassword = scanner.nextLine();
-         String hashedNew = PasswordUtils.hashPassword(newPassword);
-
-         customer.setHashedPassword(hashedNew);
-         UserFileManager.updateUser(customer);
-         System.out.println("Customer password changed successfully!");
-         return true;
-     } else {
-         System.out.println("Customer not found!");
-         return false;
-     }
- }
-}
-

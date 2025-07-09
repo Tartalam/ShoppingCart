@@ -1,5 +1,9 @@
 package Application;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Password implements Identifiable {
 	
 	// enum class for user login
@@ -12,10 +16,12 @@ public class Password implements Identifiable {
     private String password;
     private String confirmPassword;
     private String hashedPassword;
-    
+    private List<String> passwordHistory; // Stores up to 3 previous passwords
+       
     // Admin credentials (hardcoded)
-    public static final String ADMIN_USERNAME = "root";
-    public static final String ADMIN_PASSWORD = "admin";
+    public static final String ADMIN_USERNAME = "Root";
+    public static final String ADMIN_PASSWORD = "Admin";
+    public static final String ADMIN_EMAIL = "admin@system.com";
     
     public Password() {
         this.firstName = "";
@@ -28,7 +34,7 @@ public class Password implements Identifiable {
     }
     
     public Password(String firstName, String lastName, String email, 
-                   String password, String confirmPassword, LoginStatus userType, String hashedPassword) {
+                   String password, String confirmPassword, LoginStatus userType, String hashedPassword, String historyStr) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -36,6 +42,10 @@ public class Password implements Identifiable {
         this.confirmPassword = confirmPassword;
         this.userType = userType;
         this.hashedPassword = hashedPassword;
+        this.passwordHistory = new ArrayList<>();
+        if (historyStr != null && !historyStr.isEmpty()) {
+            this.passwordHistory.addAll(Arrays.asList(historyStr.split(";")));
+        }
     }
     
     public Password(Password password) {
@@ -65,7 +75,15 @@ public class Password implements Identifiable {
     public void setHashedPasswrd(String hashedPassword) {this.hashedPassword = hashedPassword;}
     
     
-    @Override
+    public List<String> getPasswordHistory() {
+		return passwordHistory;
+	}
+
+	public void setPasswordHistory(List<String> passwordHistory) {
+		this.passwordHistory = passwordHistory;
+	}
+
+	@Override
     public boolean matchByIdOrPassword(Object identifier) {
         if (identifier instanceof String) {
             String oldPassword = (String) identifier;
@@ -140,8 +158,9 @@ public class Password implements Identifiable {
     
     @Override
     public String toString() {
-        return firstName + "," + lastName + 
-               "," + email + "," + password;
+        return firstName + "," + lastName + "," + email + "," + 
+               userType + "," + hashedPassword + "," + 
+               String.join(";", passwordHistory); // Store history as semicolon-separated
     }
     
     @Override

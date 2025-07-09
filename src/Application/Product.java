@@ -43,6 +43,14 @@ public class Product implements Identifiable{
     public int getStockQuantity() { return stockQuantity; }
     public void setStockQuantity(int stockQuantity) { this.stockQuantity = stockQuantity; }
     
+    public void decreaseStock(int quantity){
+        stockQuantity -= quantity;
+    }
+
+    public void increaseStock(int quantity){
+        stockQuantity += quantity;
+    }
+    
     
     @Override
     public boolean matchByIdOrPassword(Object identifier) {
