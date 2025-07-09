@@ -20,7 +20,7 @@ public class ShoppingCart {
     public void addToCart(int productId, int quantity){
 
         Product productItem = catalog.get(productId);
-        if(productItem == null || productItem.getStock() < quantity){
+        if(productItem == null || productItem.getStockQuantity() < quantity){
             System.out.println("INVALID PRODUCT OR INSUFFICIENT STOCK");
             return;
         }

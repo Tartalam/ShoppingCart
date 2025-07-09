@@ -16,9 +16,8 @@ import java.util.List;
 
 public class FileManagement {
 	
-	 private static final String OTP_FILE = "otps.txt";
-
-   public void WriteObjectToFile(Object obj, String fileName) {
+	
+	void WriteObjectToFile(Object obj, String fileName) {
     if (obj == null || fileName == null || fileName.isEmpty()) {
       throw new IllegalArgumentException("Object or file name cannot be null or empty.");
     }
@@ -143,52 +142,7 @@ public class FileManagement {
       }
   }
     
- // Stores a newly generated OTP for a user's email
-    public static void saveOTP(String email, String otp) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(OTP_FILE, true))) {
-            writer.println(email + "," + otp + "," + System.currentTimeMillis());
-        } catch (IOException e) {
-            System.out.println("Error saving OTP: " + e.getMessage());
-        }
-    }
-
-   //Verifies if an OTP is valid (within 10 minutes) and matches the one stored
-    public static boolean verifyOTP(String email, String enteredOTP) {
-        List<String> lines = new ArrayList<>();
-        boolean verified = false;
-        long currentTime = System.currentTimeMillis();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(OTP_FILE))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 3) {
-                    long otpTime = Long.parseLong(parts[2]);
-                 // Check if OTP is still valid (within 10 minutes)
-                    if (currentTime - otpTime < 600000) {
-                        if (parts[0].equals(email) && parts[1].equals(enteredOTP)) {
-                            verified = true;
-                        } else {
-                            lines.add(line);
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error verifying OTP: " + e.getMessage());
-        }
-        
-        // Rewrite the file excluding the used/expired OTP
-        try (PrintWriter writer = new PrintWriter(new FileWriter(OTP_FILE))) {
-            for (String line : lines) {
-                writer.println(line);
-            }
-        } catch (IOException e) {
-            System.out.println("Error updating OTP file: " + e.getMessage());
-        }
-
-        return verified;
-    }
+ 
     
 }
 
