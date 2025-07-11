@@ -141,9 +141,93 @@ public class FileManagement {
           System.out.println("Error writing to file: " + e.getMessage());
       }
   }
-    
- 
-    
+  /**
+     * Saves the entire AVL tree to a file using pre-order traversal.
+     * Each node's data is written in a single line. Null children are marked with "#".
+     * @param node The root node of the AVL tree
+     * @param filename The name of the file to save to
+     */
+    public void saveAVLTreeToFile(AVL.Node node, String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            saveStructure(node, writer);
+            System.out.println("Tree saved to " + filename);
+        } catch (IOException e) {
+            System.out.println("Error saving tree: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Recursively writes the tree to file in pre-order.
+     * Each node's product data is saved. A "#" is written to denote a null node.
+     * @param node The current node being written
+     * @param writer BufferedWriter to write to the file
+     */
+    private void saveStructure(AVL.Node node, BufferedWriter writer) throws IOException {
+        if (node == null) {
+            writer.write("#\n");  // Marker for null
+            return;
+        }
+        Product p = node.getData();
+        writer.write(p.getProductId() + "," + p.getName() + "," +
+                     p.getDescription() + "," + p.getPrice() + "," + p.getStockQuantity());
+        writer.newLine();
+        saveStructure(node.getLeft(), writer);  // Save left child
+        saveStructure(node.getRight(), writer); // Save right child
+    }
+
+    /**
+     * Loads a previously saved AVL tree from a file using pre-order structure.
+     * @param filename The name of the file to read from
+     * @param avlInstance An instance of AVL needed to create new nodes
+     * @return The root node of the reconstructed AVL tree
+     */
+    public AVL.Node loadAVLTreeFromFile(String filename, AVL avlInstance) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            return loadStructure(reader, avlInstance);
+        } catch (IOException e) {
+            System.out.println("Error loading tree: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Recursively reads the tree structure from file.
+     * Constructs nodes based on file data and rebuilds the tree with correct left/right structure.
+     * @param reader BufferedReader to read the tree data
+     * @param avlInstance Instance of AVL to create new nodes
+     * @return Reconstructed node (or null if "#")
+     */
+    private AVL.Node loadStructure(BufferedReader reader, AVL avlInstance) throws IOException {
+        String line = reader.readLine();
+        if (line == null || line.equals("#")) {
+            return null;
+        }
+
+        // Parse product fields from the line
+        String[] parts = line.split(",");
+        int id = Integer.parseInt(parts[0]);
+        String name = parts[1];
+        String desc = parts[2];
+        double price = Double.parseDouble(parts[3]);
+        int stockQuantity = Integer.parseInt(parts[4]);
+
+        // Create product and node
+        Product product = new Product(id, name, desc, price, stockQuantity);
+        AVL.Node node = avlInstance.new Node(product);
+
+        // Recursively build left and right subtrees
+        node.setLeft(loadStructure(reader, avlInstance));
+        node.setRight(loadStructure(reader, avlInstance));
+
+        // Update height after loading children
+        node.setHeight(Math.max(
+            node.getHeight(node.getLeft()),
+            node.getHeight(node.getRight())
+        ) + 1);
+
+        return node;
+    }
+       
 }
 
 
