@@ -154,14 +154,27 @@ public class ShoppingCart {
      */
     @SuppressWarnings("unchecked")
     private void loadFromFile() {
-        try (ObjectInputStream cartIn = new ObjectInputStream(new FileInputStream(CART_FILE));
-             ObjectInputStream stackIn = new ObjectInputStream(new FileInputStream(STACK_FILE))) {
-            cart = (Map<Integer, Integer>) cartIn.readObject();
-            operationStack = (Stack<CartOperation>) stackIn.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            // Initialize fresh cart if no saved data exists
-            cart = new HashMap<>();
-            operationStack = new Stack<>();
-        }
+    	 File cartFile = new File(CART_FILE);
+    	    File stackFile = new File(STACK_FILE);
+    	    
+    	    if (!cartFile.exists() || !stackFile.exists()) {
+    	        cart = new HashMap<>();
+    	        operationStack = new Stack<>();
+    	        return;
+    	    }
+
+    	    try (ObjectInputStream cartIn = new ObjectInputStream(new FileInputStream(cartFile));
+    	         ObjectInputStream stackIn = new ObjectInputStream(new FileInputStream(stackFile))) {
+    	        cart = (Map<Integer, Integer>) cartIn.readObject();
+    	        operationStack = (Stack<CartOperation>) stackIn.readObject();
+    	    } catch (IOException | ClassNotFoundException e) {
+    	        System.err.println("Failed to load cart state: " + e.getMessage());
+    	        cart = new HashMap<>();
+    	        operationStack = new Stack<>();
+    	    } catch (ClassCastException e) {
+    	        System.err.println("Cart data corruption detected: " + e.getMessage());
+    	        cart = new HashMap<>();
+    	        operationStack = new Stack<>();
+    	    }
     }
 }

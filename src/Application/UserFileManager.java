@@ -2,6 +2,8 @@
 package Application;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import Application.Password.LoginStatus;
@@ -11,10 +13,40 @@ class UserFileManager {
     private static final String OTP_FILE = "otps.txt";
 
     public static void saveUser(Password user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        // Create backup of existing file
+        File userFile = new File(USER_FILE);
+        File backupFile = new File(USER_FILE + ".bak");
+        if (userFile.exists()) {
+            try {
+                Files.copy(userFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                System.err.println("Failed to create backup: " + e.getMessage());
+            }
+        }
+
+        // Save user data
         try (PrintWriter writer = new PrintWriter(new FileWriter(USER_FILE, true))) {
-            writer.println(user.toString()); // Now includes history
+            writer.println(user.toString());
         } catch (IOException e) {
-            System.out.println("Error saving user: " + e.getMessage());
+            // Restore from backup if save failed
+            if (backupFile.exists()) {
+                try {
+                    Files.copy(backupFile.toPath(), userFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException ex) {
+                    System.err.println("Failed to restore from backup: " + ex.getMessage());
+                }
+            }
+            System.err.println("Error saving user: " + e.getMessage());
+            throw new RuntimeException("User save failed", e);
+        } finally {
+            // Clean up backup
+            if (backupFile.exists()) {
+                backupFile.delete();
+            }
         }
     }
 

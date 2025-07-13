@@ -11,23 +11,23 @@
 package Application;
 
 public class CatalogManager {
-    private LinkedList<Product> linkedList;
+    private CLinkedList<Product> linkedList;
     private AVL avl;
 
     /**
      * Default constructor initializes both data structures.
      */
     public CatalogManager() {
-        linkedList = new LinkedList<Product>();
+        linkedList = new CLinkedList<Product>();
         avl = new AVL();
     }
 
     // Getters and setters
-    public LinkedList<Product> getLinkedList() {
+    public CLinkedList<Product> getLinkedList() {
         return linkedList;
     }
 
-    public void setLinkedList(LinkedList<Product> linkedList) {
+    public void setLinkedList(CLinkedList<Product> linkedList) {
         this.linkedList = linkedList;
     }
 
@@ -44,8 +44,21 @@ public class CatalogManager {
      * @param product The product to insert
      */
     public void insertProductAtFront(Product product) {
-        linkedList.insertAtFront(product);
-        avl.insertProduct(product);
+    	if (product == null)
+    	{
+    		throw new IllegalArgumentException("Product cant be null");
+    	}
+    	try 
+    	{
+    		 
+    		linkedList.insertAtFront(product);
+    	    avl.insertProduct(product);
+    		
+    	}catch(Exception e) {
+    		System.err.println("error Inserting product: " + e.getMessage());
+    		throw e;
+    	}
+       
     }
 
     /**
@@ -53,8 +66,20 @@ public class CatalogManager {
      * @param product The product to insert
      */
     public void insertProductAtBack(Product product) {
-        linkedList.insertAtBack(product);
-        avl.insertProduct(product);
+    	if (product == null)
+    	{
+    		throw new IllegalArgumentException("Product cant be null");
+    	}
+    	try 
+    	{
+    		 
+    		linkedList.insertAtBack(product);
+    	    avl.insertProduct(product);
+    		
+    	}catch(Exception e) {
+    		System.err.println("error Inserting product: " + e.getMessage());
+    		throw e;
+    	}
     }
 
     /**
@@ -63,16 +88,21 @@ public class CatalogManager {
      */
     public void deleteProduct(int productId) {
         // First find the product in AVL tree to get complete data
-        AVL.Node node = avl.productSearch(productId);
-        if (node != null) {
-            Product productToRemove = node.getData();
-            // Remove from AVL tree
-            avl.deleteProduct(productId);
-            // Remove from linked list
-            Product removed = linkedList.deleteNode(productToRemove);
-            if (removed != null) {
-                System.out.println("Product #"+removed.getProductId()+"- "+removed.getName()+" has been removed from the catalog.");
+    	try {
+            AVL.Node node = avl.productSearch(productId);
+            if (node != null) {
+                Product productToRemove = node.getData();
+                avl.deleteProduct(productId);
+                Product removed = linkedList.deleteNode(productToRemove);
+                if (removed != null) {
+                    System.out.println("Product #"+removed.getProductId()+"- "+removed.getName()+" has been removed from the catalog.");
+                }
+            } else {
+                System.err.println("Product with ID " + productId + " not found");
             }
+        } catch (Exception e) {
+            System.err.println("Error deleting product: " + e.getMessage());
+            throw e;
         }
     }
 
@@ -84,13 +114,22 @@ public class CatalogManager {
      */
     public boolean updateProduct(int productId, Product updates) {
         // Update in AVL tree
-        boolean avlUpdated = avl.modifyProduct(productId, updates);
-        if (avlUpdated) {
-            // Update in linked list
-            linkedList.updateNode(productId, updates);
-            return true;
-        }
-        return false;
+    	try 
+    	{
+    		boolean avlUpdated = avl.modifyProduct(productId, updates);
+    		if (avlUpdated) {
+                // Update in linked list
+                linkedList.updateNode(productId, updates);
+                return true;
+            }
+            return false;
+    		
+    	}catch( Exception e) {
+    		System.err.println("error updating product: " + e.getMessage());
+    		throw e;
+    	}
+        
+        
     }
 
     /**
@@ -113,20 +152,27 @@ public class CatalogManager {
      * @return The found product, or null if not found
      */
     public Product searchProduct(int productId) {
-        AVL.Node node = avl.productSearch(productId);
-        if (node != null) {
-            System.out.println("Found: " + node.getData());
-            return node.getData();
-        }
-        System.out.println("Product not found.");
-        return null;
+    	try {
+            AVL.Node node = avl.productSearch(productId);
+            if (node != null) {
+                System.out.println("Found: " + node.getData());
+                return node.getData();
+            }
+            System.out.println("Product not found.");
+            return null;
+    		
+    	} catch (Exception e) {
+    		System.err.println("Error Product cannot be found: "+ e.getMessage());
+    		throw e;
+    	}
+
     }
 
     /**
      * Gets the linked list of products.
      * @return The linked list containing all products
      */
-    public LinkedList<Product> getList() {
+    public CLinkedList<Product> getList() {
         return linkedList;
     }
 }

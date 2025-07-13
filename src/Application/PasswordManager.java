@@ -31,7 +31,7 @@ public class PasswordManager {
         }
 
         // Step 3: Generate OTP and send via email
-        String otp = PasswordUtils.generateOTP();
+        String otp = PasswordUtility.generateOTP();
         if (Email.sendOTP(email, otp)) {
             // Step 4: Save OTP to file for verification later
             UserFileManager.saveOTP(email, otp);
@@ -68,7 +68,7 @@ public class PasswordManager {
         // Step 3: Check password and confirmation match
         if (user != null && password.equals(confirmPassword)) {
             // Step 4: Hash password and update user record
-            user.setHashedPassword(PasswordUtils.hashPassword(password));
+            user.setHashedPassword(PasswordUtility.hashPassword(password));
             UserFileManager.saveUser(user);
             return user;
         }
@@ -89,7 +89,7 @@ public class PasswordManager {
             	return new Password(
             		    "Admin", "Root", "admin@system.com",
             		    "", "", Password.LoginStatus.ADMIN, 
-            		    PasswordUtils.hashPassword(password), ""
+            		    PasswordUtility.hashPassword(password), ""
             		);
             }
             return null;
@@ -104,7 +104,7 @@ public class PasswordManager {
             }
             
             // Verify password hash matches stored hash
-            if (user.getHashedPassword().equals(PasswordUtils.hashPassword(password))) {
+            if (user.getHashedPassword().equals(PasswordUtility.hashPassword(password))) {
                 return user;
             }
         }
@@ -122,19 +122,19 @@ public class PasswordManager {
      */
     public boolean changePassword(Password user, String currentPassword, String newPassword, String confirmPassword) {
         // Step 1: Verify current password is correct
-        if (!user.getHashedPassword().equals(PasswordUtils.hashPassword(currentPassword))) {
+        if (!user.getHashedPassword().equals(PasswordUtility.hashPassword(currentPassword))) {
             return false;
         }
 
         // Step 2: Check if new password was used before (from history)
-        if (user.checkPasswordInHistory(PasswordUtils.hashPassword(newPassword))) {
+        if (user.checkPasswordInHistory(PasswordUtility.hashPassword(newPassword))) {
             return false;
         }
 
         // Step 3: Verify new password and confirmation match
         if (newPassword.equals(confirmPassword)) {
             // Step 4: Update password and save to file
-            user.setHashedPassword(PasswordUtils.hashPassword(newPassword));
+            user.setHashedPassword(PasswordUtility.hashPassword(newPassword));
             UserFileManager.saveUser(user);
             return true;
         }
@@ -153,12 +153,12 @@ public class PasswordManager {
         Password user = UserFileManager.findUserByName(firstName, lastName);
         if (user != null) {
             // Step 2: Generate a secure random password
-            String newPassword = PasswordUtils.generateRandomPassword();
+            String newPassword = PasswordUtility.generateRandomPassword();
             
             // Step 3: Email the new password to user
             if (Email.sendNewPassword(user.getEmail(), newPassword)) {
                 // Step 4: Update password in system
-                user.setHashedPassword(PasswordUtils.hashPassword(newPassword));
+                user.setHashedPassword(PasswordUtility.hashPassword(newPassword));
                 UserFileManager.saveUser(user);
                 return true;
             }
@@ -178,7 +178,7 @@ public class PasswordManager {
         Password customer = UserFileManager.loadUser(email);
         if (customer != null && customer.getUserType() == Password.LoginStatus.USER) {
             // Step 2: Update password directly (no current password required for admin)
-            customer.setHashedPassword(PasswordUtils.hashPassword(newPassword));
+            customer.setHashedPassword(PasswordUtility.hashPassword(newPassword));
             UserFileManager.saveUser(customer);
             return true;
         }

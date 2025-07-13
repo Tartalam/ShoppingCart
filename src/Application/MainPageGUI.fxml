@@ -150,7 +150,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <Label layoutX="813.0" layoutY="103.0" text="Queue" />
+            <Label layoutX="813.0" layoutY="103.0" text="Queue" AnchorPane.rightAnchor="228.0" />
          </children>
       </AnchorPane>
    </top>
