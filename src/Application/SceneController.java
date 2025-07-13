@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
@@ -16,6 +17,15 @@ public class SceneController {
 	private Stage stage;
 	private Scene scene;
 	private Parent root;
+	
+	@FXML
+	private TextField nameTextField;
+	@FXML
+	private TextField descriptionTextField;
+	@FXML
+	private TextField priceTextField;
+	@FXML
+	private TextField quantityTextField;
 	
 	// Switch to the main product page.
 	public void switchToMainPage(MouseEvent event) throws IOException{
@@ -34,8 +44,9 @@ public class SceneController {
 		scene = new Scene(root);
 		stage.setScene(scene);
 		stage.show();
-		
 	}
+	   
+		
 	
 	// Switch to the cart page.
 	public void switchToCartPage(MouseEvent event) throws IOException{
