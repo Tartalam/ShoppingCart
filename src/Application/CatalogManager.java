@@ -10,16 +10,37 @@
 */
 package Application;
 
+import java.io.IOException;
+
 public class CatalogManager {
     private CLinkedList<Product> linkedList;
     private AVL avl;
+    private AVLFileManager avlFileManager;
 
     /**
      * Default constructor initializes both data structures.
      */
     public CatalogManager() {
+        avlFileManager = new AVLFileManager();
+        try {
+            avl = avlFileManager.loadAVLTree();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error loading AVL tree: " + e.getMessage());
+            avl = new AVL();
+        }
         linkedList = new CLinkedList<Product>();
-        avl = new AVL();
+    }
+    
+    
+    /**
+     * Saves the current AVL tree to file
+     */
+    public void saveAVLTree() {
+        try {
+            avlFileManager.saveAVLTree(avl);
+        } catch (IOException e) {
+            System.err.println("Error saving AVL tree: " + e.getMessage());
+        }
     }
 
     // Getters and setters
@@ -87,15 +108,26 @@ public class CatalogManager {
      * @param productId The ID of the product to delete
      */
     public void deleteProduct(int productId) {
-        // First find the product in AVL tree to get complete data
-    	try {
+        try {
+            // First find the product in AVL tree
             AVL.Node node = avl.productSearch(productId);
             if (node != null) {
                 Product productToRemove = node.getData();
+                
+                // Delete from AVL tree
                 avl.deleteProduct(productId);
+                
+                // Delete from linked list using the product object from AVL
                 Product removed = linkedList.deleteNode(productToRemove);
+                
                 if (removed != null) {
-                    System.out.println("Product #"+removed.getProductId()+"- "+removed.getName()+" has been removed from the catalog.");
+                    System.out.println("Product #"+removed.getProductId()+" deleted from both structures");
+                } else {
+                    // If not found in linked list, rebuild the list from AVL
+                    System.out.println("Rebuilding linked list from AVL tree...");
+                    rebuildLinkedListFromAVL();
+                    // Try deletion again
+                    linkedList.deleteNode(productToRemove);
                 }
             } else {
                 System.err.println("Product with ID " + productId + " not found");
@@ -103,6 +135,22 @@ public class CatalogManager {
         } catch (Exception e) {
             System.err.println("Error deleting product: " + e.getMessage());
             throw e;
+        }
+    }
+
+    /**
+     * Rebuilds the linked list from the AVL tree to ensure synchronization
+     */
+    private void rebuildLinkedListFromAVL() {
+        linkedList = new CLinkedList<>();
+        rebuildLinkedListHelper(avl.getHead());
+    }
+
+    private void rebuildLinkedListHelper(AVL.Node node) {
+        if (node != null) {
+            rebuildLinkedListHelper(node.getLeft());
+            linkedList.insertAtBack(node.getData());
+            rebuildLinkedListHelper(node.getRight());
         }
     }
 

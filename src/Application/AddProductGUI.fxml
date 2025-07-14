@@ -86,14 +86,14 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <Button layoutX="126.0" layoutY="516.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: #6F7A8A;" text="Add Product" textFill="WHITE">
+                  <Button fx:id="addProduct" layoutX="126.0" layoutY="516.0" mnemonicParsing="false" onAction="#addNewProduct" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: #6F7A8A;" text="Add Product" textFill="WHITE">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <font>
                         <Font name="Arial Rounded MT Bold" size="22.0" />
                      </font></Button>
-                  <Label layoutX="46.0" layoutY="327.0" prefHeight="17.0" prefWidth="201.0" text="Please enter a Number" textFill="#d31717">
+                  <Label fx:id="priceLabel" layoutX="46.0" layoutY="327.0" prefHeight="17.0" prefWidth="404.0" textFill="#d31717">
                      <font>
                         <Font name="Arial" size="13.0" />
                      </font>
@@ -103,16 +103,26 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="quantitytextField" layoutX="46.0" layoutY="384.0" prefHeight="40.0" prefWidth="402.0">
+                  <TextField fx:id="quantityTextField" layoutX="46.0" layoutY="384.0" prefHeight="40.0" prefWidth="402.0">
                      <cursor>
                         <Cursor fx:constant="TEXT" />
                      </cursor></TextField>
-                  <Label layoutX="46.0" layoutY="424.0" prefHeight="17.0" prefWidth="201.0" text="Please enter a Number" textFill="#d31717">
+                  <Label fx:id="quantityLabel" layoutX="46.0" layoutY="424.0" prefHeight="17.0" prefWidth="404.0" textFill="#d31717">
                      <font>
                         <Font name="Arial" size="13.0" />
                      </font>
                   </Label>
-                  <TextArea fx:id="descriptionTextField" layoutX="47.0" layoutY="159.0" prefHeight="90.0" prefWidth="401.0" />
+                  <TextArea fx:id="descriptionTextField" layoutX="47.0" layoutY="155.0" prefHeight="90.0" prefWidth="401.0" />
+                  <Label fx:id="desLabel" layoutX="46.0" layoutY="245.0" prefHeight="17.0" prefWidth="402.0" textFill="#d31717">
+                     <font>
+                        <Font name="Arial" size="13.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="nameLabel" layoutX="47.0" layoutY="103.0" prefHeight="17.0" prefWidth="402.0" textFill="#d31717">
+                     <font>
+                        <Font name="Arial" size="13.0" />
+                     </font>
+                  </Label>
                </children>
             </Pane>
             <Label alignment="CENTER" focusTraversable="false" layoutX="100.0" layoutY="14.0" prefHeight="54.0" prefWidth="534.0" text="Add New Product" AnchorPane.leftAnchor="208.0" AnchorPane.rightAnchor="208.0">

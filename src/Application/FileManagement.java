@@ -114,7 +114,7 @@ public class FileManagement {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] parsedObject = parseLineToObject(line);
-                    if (parsedObject.length > 1 && !parsedObject[1].trim().equals(productId)) {
+                    if (parsedObject.length > 1 && !parsedObject[0].trim().equals(productId)) {
                         writer.write(line);
                         writer.newLine();
                     } else {
@@ -124,7 +124,7 @@ public class FileManagement {
             }
 
             if (!objectFound) {
-                throw new IllegalArgumentException("Object with TRN " + productId + " not found in " + fileName);
+                throw new IllegalArgumentException("Object with Product ID " + productId + " not found in " + fileName);
             }
 
             // Atomically replace original file with temp file

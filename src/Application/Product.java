@@ -1,6 +1,10 @@
 package Application;
 
-public class Product implements Identifiable{
+import java.io.Serializable;
+import java.util.Random;
+
+public class Product implements Identifiable, Serializable{
+	private static final long serialVersionUID = 1L;
     private int productId;
     private String name;
     private String description;
@@ -80,6 +84,35 @@ public class Product implements Identifiable{
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Generates a random 4-digit product ID that's unique in the given linked list
+     * @param productList The linked list to check for existing IDs
+     * @return A unique 4-digit product ID
+     */
+    public static int generateUniqueProductId(CLinkedList<Product> productList) {
+        Random random = new Random();
+        int newId;
+        boolean isUnique;
+        
+        do {
+            // Generate a 4-digit number between 1000 and 9999
+            newId = 1000 + random.nextInt(9000);
+            isUnique = true;
+            
+            // Check if this ID already exists in the list
+            Node<Product> current = productList.getHead();
+            while (current != null) {
+                if (current.getData().getProductId() == newId) {
+                    isUnique = false;
+                    break;
+                }
+                current = current.getNextNode();
+            }
+        } while (!isUnique); // Keep generating until we find a unique ID
+        
+        return newId;
     }
     
     @Override

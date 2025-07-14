@@ -27,6 +27,8 @@ public class ProductFileManager {
         }
         
         fileManager.updateObjectsInFile(fileName, records);
+     // Also save the AVL tree
+        new AVLFileManager().saveAVLTree(new CatalogManager().getAvl());
     }
 
     // Load products from file into a linked list
@@ -53,6 +55,45 @@ public class ProductFileManager {
         
         return productList;
     }
+    
+    /**
+     * Updates a specific product in the file while preserving other records
+     * @param updatedProduct The product with updated information
+     * @throws IOException If file operations fail
+     */
+    public void updateProductInFile(Product updatedProduct) throws IOException {
+        // Input validation
+        if (updatedProduct == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+
+        // Read all existing products
+        LinkedList<String[]> allRecords = fileManager.readObjectsFromFile(fileName);
+        LinkedList<String[]> updatedRecords = new LinkedList<>();
+
+        boolean productFound = false;
+        
+        // Update the specific product record
+        for (String[] record : allRecords) {
+            if (record.length >= 1 && record[0].trim().equals(String.valueOf(updatedProduct.getProductId()))) {
+                // Replace with updated product
+                updatedRecords.add(updatedProduct.toString().split(","));
+                productFound = true;
+            } else {
+                // Keep other records as-is
+                updatedRecords.add(record);
+            }
+        }
+
+        if (!productFound) {
+            throw new IOException("Product with ID " + updatedProduct.getProductId() + " not found in file");
+        }
+
+        // Write all records back to file
+        fileManager.updateObjectsInFile(fileName, updatedRecords);
+    }
+    
+    
 
     // Add a single product to the file
     public void addProduct(Product product) throws IOException {
@@ -61,6 +102,14 @@ public class ProductFileManager {
 
     // Delete a product from the file by product ID
     public void deleteProduct(int productId) throws IOException {
-        fileManager.deleteObjectFromFile(String.valueOf(productId), fileName);
+    	try {
+            fileManager.deleteObjectFromFile(String.valueOf(productId), fileName);
+        } catch (IllegalArgumentException e) {
+            // Product not found in file is not necessarily an error
+            System.out.println("Product not found in file, continuing with data structure deletion");
+        } catch (IOException e) {
+            System.err.println("File operation failed: " + e.getMessage());
+            throw e;
+        }
     }
 }

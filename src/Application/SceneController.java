@@ -7,8 +7,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
 
@@ -18,14 +22,9 @@ public class SceneController {
 	private Scene scene;
 	private Parent root;
 	
-	@FXML
-	private TextField nameTextField;
-	@FXML
-	private TextField descriptionTextField;
-	@FXML
-	private TextField priceTextField;
-	@FXML
-	private TextField quantityTextField;
+
+
+	
 	
 	// Switch to the main product page.
 	public void switchToMainPage(MouseEvent event) throws IOException{
@@ -165,6 +164,343 @@ public class SceneController {
 		stage.setScene(scene);
 		stage.show();
 		
+	}
+	
+	@FXML
+	private TextField nameTextField ;
+	@FXML
+	private TextField priceTextField;
+	@FXML
+	private TextField quantityTextField;;
+	@FXML
+	private TextArea descriptionTextField;
+	@FXML
+	private Label nameLabel;
+	@FXML
+	private Label desLabel;
+	@FXML
+	private Label priceLabel;
+	@FXML
+	private Label  quantityLabel;
+	@FXML
+	private Button addProduct;
+	
+	/**
+	 * Handles the addition of a new product to both the linked list and AVL tree,
+	 * with data persistence to file. Performs comprehensive validation of all input fields
+	 * and provides user feedback through error labels.
+	 * 
+	 * @param event The button action event that triggered this method
+	 * @throws IOException If there's an error during file operations
+	 */
+	public void addNewProduct(ActionEvent event) throws IOException {
+	    // Initialize variables for product data
+	    String name;
+	    String description;
+	    double price = 0.0;
+	    int quantity = 0;
+	    int productId;
+	    
+	    // Clear any previous error messages
+	    nameLabel.setText("");
+	    desLabel.setText("");
+	    priceLabel.setText("");
+	    quantityLabel.setText("");
+	    
+	    try {
+	        // 1. Load existing products from file or create new file if none exists
+	        ProductFileManager fileManager = new ProductFileManager();
+	        CLinkedList<Product> productList;
+	        
+	        try {
+	            productList = fileManager.loadProducts();
+	        } catch (IOException e) {
+	            // If file doesn't exist, create a new empty list
+	            System.out.println("No existing product file found. Creating new catalog.");
+	            productList = new CLinkedList<>();
+	        }
+	        
+	        // 2. Generate unique product ID
+	        productId = Product.generateUniqueProductId(productList);
+	        System.out.println("Generated Product ID: " + productId);
+	        
+	        // 3. Validate and collect product name
+	        name = nameTextField.getText().trim();
+	        if (name.isEmpty()) {
+	            nameLabel.setText("You must enter a product name.");
+	            return; // Stop execution if validation fails
+	        }
+	        
+	        // 4. Validate and collect product description
+	        description = descriptionTextField.getText().trim();
+	        if (description.isEmpty()) {
+	            desLabel.setText("Description cannot be empty.");
+	            return;
+	        }
+	        
+	        // 5. Validate and collect product price
+	        try {
+	            price = Double.parseDouble(priceTextField.getText().trim());
+	            if (price <= 0) {
+	                priceLabel.setText("Price must be greater than 0.");
+	                return;
+	            }
+	        } catch (NumberFormatException e) {
+	            priceLabel.setText("Invalid price format. Enter a valid number.");
+	            return;
+	        }
+	        
+	        // 6. Validate and collect product quantity
+	        try {
+	            quantity = Integer.parseInt(quantityTextField.getText().trim());
+	            if (quantity <= 0) {
+	                quantityLabel.setText("Quantity must be greater than 0.");
+	                return;
+	            }
+	        } catch (NumberFormatException e) {
+	            quantityLabel.setText("Invalid quantity. Enter whole numbers only.");
+	            return;
+	        }
+	        
+	        // 7. Create new product with validated data
+	        Product newProduct = new Product(productId, name, description, price, quantity);
+	        
+	        // 8. Add product to data structures
+	        CatalogManager catalogManager = new CatalogManager();
+	        catalogManager.insertProductAtFront(newProduct);
+	        
+	        // 9. Save updated product list to file
+	        try {
+	        	
+	            fileManager.addProduct(newProduct);
+	            catalogManager.saveAVLTree();
+	            System.out.println("Product successfully added to file.");
+	            
+	            // Clear form fields after successful submission
+	            nameTextField.clear();
+	            descriptionTextField.clear();
+	            priceTextField.clear();
+	            quantityTextField.clear();
+	            
+	            // Show success message (you could add a success label to your FXML if needed)
+	            nameLabel.setText("Product added successfully!");
+	            nameLabel.setTextFill(Color.GREEN);
+	            
+	        } catch (IOException e) {
+	            System.err.println("Error saving product to file: " + e.getMessage());
+	            nameLabel.setText("Error saving product. Please try again.");
+	            nameLabel.setTextFill(Color.RED);
+	        }
+	        
+	    } catch (Exception e) {
+	        System.err.println("Unexpected error submitting the form: " + e.getMessage());
+	        nameLabel.setText("An unexpected error occurred. Please try again.");
+	        nameLabel.setTextFill(Color.RED);
+	    }
+	}
+	
+	@FXML
+	private TextField idTextField;
+	@FXML
+	private Label idLabel;
+	@FXML
+	private Label warningLabel;
+	
+	/**
+	 * Handles updating an existing product in both the AVL tree and linked list.
+	 * Validates all input fields and only updates fields with valid values.
+	 * Provides user feedback through error labels and the warningLabel.
+	 * 
+	 * @param event The button action event that triggered this method
+	 * @throws IOException If there's an error during file operations
+	 */
+	
+	public void updatExistingProduct(ActionEvent event) throws IOException{
+		
+		String name;
+	    String description;
+	    double price = 0.0;
+	    int quantity = 0;
+	    int productId;
+	    
+	 // Clear any previous error messages
+	    nameLabel.setText("");
+	    desLabel.setText("");
+	    priceLabel.setText("");
+	    quantityLabel.setText("");
+	    idLabel.setText("");
+	    warningLabel.setText("");
+	    
+	    
+	    try {
+	        // 1. Validate and collect product ID
+	        try {
+	            productId = Integer.parseInt(idTextField.getText().trim());
+	            if (productId <= 0) {
+	                idLabel.setText("Product ID must be greater than 0.");
+	                return;
+	            }
+	        } catch (NumberFormatException e) {
+	            idLabel.setText("Invalid Product ID. Enter whole numbers only.");
+	            return;
+	        }
+	        
+	        // 2. Load existing catalog data
+	        CatalogManager catalogManager = new CatalogManager();
+	        ProductFileManager fileManager = new ProductFileManager();
+	        
+	        // 3. Search for the product in AVL tree
+	        Product existingProduct = catalogManager.searchProduct(productId);
+	        if (existingProduct == null) {
+	            warningLabel.setText("Product is not found in the system");
+	            warningLabel.setTextFill(Color.RED);
+	            return;
+	        }
+	        
+	        // 4. Create update object with existing values (as fallback)
+	        Product updates = new Product(existingProduct);
+	        
+	        // 5. Validate and collect updated name (only if field is not empty)
+	        name = nameTextField.getText().trim();
+	        if (!name.isEmpty()) {
+	            updates.setName(name);
+	        }
+	        
+	        // 6. Validate and collect updated description (only if field is not empty)
+	        description = descriptionTextField.getText().trim();
+	        if (!description.isEmpty()) {
+	            updates.setDescription(description);
+	        }
+	        
+	        // 7. Validate and collect updated price (only if field is not empty and valid)
+	        String priceText = priceTextField.getText().trim();
+	        if (!priceText.isEmpty()) {
+	            try {
+	                price = Double.parseDouble(priceText);
+	                if (price <= 0) {
+	                    priceLabel.setText("Price must be greater than 0.");
+	                    return;
+	                }
+	                updates.setPrice(price);
+	            } catch (NumberFormatException e) {
+	                priceLabel.setText("Invalid price format. Enter a valid number.");
+	                return;
+	            }
+	        }
+	        
+	        // 8. Validate and collect updated quantity (only if field is not empty and valid)
+	        String quantityText = quantityTextField.getText().trim();
+	        if (!quantityText.isEmpty()) {
+	            try {
+	                quantity = Integer.parseInt(quantityText);
+	                if (quantity <= 0) {
+	                    quantityLabel.setText("Quantity must be greater than 0.");
+	                    return;
+	                }
+	                updates.setStockQuantity(quantity);
+	            } catch (NumberFormatException e) {
+	                quantityLabel.setText("Invalid quantity. Enter whole numbers only.");
+	                return;
+	            }
+	        }
+	        
+	        // 9. Update the product in both data structures
+	        boolean updateSuccess = catalogManager.updateProduct(productId, updates);
+	        
+	        if (updateSuccess) {
+	            // 10. Save updated data to files
+	            try {
+	                // Save the updated linked list to products.csv
+	                fileManager.updateProductInFile(updates);
+	                // Save the AVL tree
+	                catalogManager.saveAVLTree();
+	                
+	                // Clear form fields after successful update
+	                idTextField.clear();
+	                nameTextField.clear();
+	                descriptionTextField.clear();
+	                priceTextField.clear();
+	                quantityTextField.clear();
+	                
+	                // Show success message
+	                warningLabel.setText("Product updated successfully!");
+	                warningLabel.setTextFill(Color.GREEN);
+	            } catch (IOException e) {
+	                System.err.println("Error saving updated product: " + e.getMessage());
+	                warningLabel.setText("Error saving updates. Please try again.");
+	                warningLabel.setTextFill(Color.RED);
+	            }
+	        } else {
+	            warningLabel.setText("Failed to update product. Please try again.");
+	            warningLabel.setTextFill(Color.RED);
+	        }
+	        
+	    } catch (Exception e) {
+	        System.err.println("Unexpected error during product update: " + e.getMessage());
+	        warningLabel.setText("An unexpected error occurred. Please try again.");
+	        warningLabel.setTextFill(Color.RED);
+	    }
+	    
+		
+	}
+	
+	public void deleteExistingProducts(ActionEvent event) throws IOException {
+	    int productId;
+	    
+	    // Clear previous messages
+	    idLabel.setText("");
+	    warningLabel.setText("");
+	    
+	    try {
+	        // 1. Validate and collect product ID
+	        try {
+	            productId = Integer.parseInt(idTextField.getText().trim());
+	            if (productId <= 0) {
+	                idLabel.setText("Product ID must be greater than 0.");
+	                return;
+	            }
+	        } catch (NumberFormatException e) {
+	            idLabel.setText("Invalid Product ID. Enter whole numbers only.");
+	            return;
+	        }
+	        
+	        // 2. Load existing catalog data
+	        CatalogManager catalogManager = new CatalogManager();
+	        ProductFileManager fileManager = new ProductFileManager();
+	        
+	        // 3. Search for the product in AVL tree
+	        Product existingProduct = catalogManager.searchProduct(productId);
+	        if (existingProduct == null) {
+	            warningLabel.setText("Product is not found in the system");
+	            warningLabel.setTextFill(Color.RED);
+	            return;
+	        }
+	        
+	        // 4. Delete product from both data structures
+	        catalogManager.deleteProduct(productId);
+	        
+	        try {
+	            // Delete from file (if exists)
+	            fileManager.deleteProduct(productId);
+	        } catch (IOException e) {
+	            System.out.println("Product not found in file, continuing...");
+	        }
+	        
+	        // Save the updated AVL tree
+	        catalogManager.saveAVLTree();
+	        
+	        // Clear the ID field
+	        idTextField.clear();
+	        
+	        // Show success message
+	        warningLabel.setText("Product deleted successfully!");
+	        warningLabel.setTextFill(Color.GREEN);
+	        
+	    } catch (Exception e) {
+	        System.err.println("Unexpected error during product deletion: " + e.getMessage());
+	        warningLabel.setText("An unexpected error occurred. Please try again.");
+	        warningLabel.setTextFill(Color.RED);
+	    }
 	}
 	
 

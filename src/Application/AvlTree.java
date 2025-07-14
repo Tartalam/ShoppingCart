@@ -1,17 +1,20 @@
 package Application;
-
+import java.io.Serializable;
 /**
  * AVL Tree implementation for storing and managing Product objects.
  * This self-balancing binary search tree ensures O(log n) time complexity for 
  * insert, delete, and search operations by maintaining height balance.
  */
-class AVL {
+class AVL implements Serializable{
     
+	
+	private static final long serialVersionUID = 1L;
     /**
      * Inner Node class representing individual nodes in the AVL tree.
      * Each node contains Product data and maintains balance information.
      */
-    public class Node {
+    public static class Node implements Serializable{
+    	private static final long serialVersionUID = 1L;
         private Product data;      // The Product object stored in this node
         private Node left;        // Reference to left child node
         private Node right;       // Reference to right child node
