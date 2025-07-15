@@ -24,11 +24,13 @@ public class CatalogManager {
         avlFileManager = new AVLFileManager();
         try {
             avl = avlFileManager.loadAVLTree();
+            // Add this line to rebuild the linked list from the AVL tree
+            rebuildLinkedListFromAVL();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error loading AVL tree: " + e.getMessage());
             avl = new AVL();
+            linkedList = new CLinkedList<Product>();
         }
-        linkedList = new CLinkedList<Product>();
     }
     
     
@@ -141,16 +143,18 @@ public class CatalogManager {
     /**
      * Rebuilds the linked list from the AVL tree to ensure synchronization
      */
-    private void rebuildLinkedListFromAVL() {
-        linkedList = new CLinkedList<>();
-        rebuildLinkedListHelper(avl.getHead());
+    public void rebuildLinkedListFromAVL() {
+    	linkedList = new CLinkedList<>();
+        if (avl != null && avl.getHead() != null) {
+            inOrderTraversal(avl.getHead());
+        }
     }
 
-    private void rebuildLinkedListHelper(AVL.Node node) {
+    private void inOrderTraversal(AVL.Node node) {
         if (node != null) {
-            rebuildLinkedListHelper(node.getLeft());
+            inOrderTraversal(node.getLeft());
             linkedList.insertAtBack(node.getData());
-            rebuildLinkedListHelper(node.getRight());
+            inOrderTraversal(node.getRight());
         }
     }
 

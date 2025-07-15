@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,7 +12,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
@@ -22,7 +27,47 @@ public class SceneController {
 	private Scene scene;
 	private Parent root;
 	
-
+	@FXML
+	private TextField searchTextField;
+	@FXML
+	private Button submitButton;
+	@FXML
+	private Label cartAmount;
+	@FXML
+	private Label userLabel;
+	@FXML
+	private TextField idTextField;
+	@FXML
+	private Label idLabel;
+	@FXML
+	private Label warningLabel;
+	@FXML
+	private TextField nameTextField ;
+	@FXML
+	private TextField priceTextField;
+	@FXML
+	private TextField quantityTextField;;
+	@FXML
+	private TextArea descriptionTextField;
+	@FXML
+	private Label nameLabel;
+	@FXML
+	private Label desLabel;
+	@FXML
+	private Label priceLabel;
+	@FXML
+	private Label  quantityLabel;
+	@FXML
+	private Button addProduct;
+	@FXML
+	private ImageView productImage;
+	@FXML
+	private Button cartButton;
+	@FXML
+	private FlowPane productsFlowPane;
+	@FXML private TilePane cartTilePane;
+	@FXML private Button orderButton;
+	@FXML private Label grandTotalLabel;
 
 	
 	
@@ -33,6 +78,9 @@ public class SceneController {
 		scene = new Scene(root);
 		stage.setScene(scene);
 		stage.show();
+		
+		//Populate products after loading
+		populateMainPage();
 		
 	}
 	
@@ -166,24 +214,8 @@ public class SceneController {
 		
 	}
 	
-	@FXML
-	private TextField nameTextField ;
-	@FXML
-	private TextField priceTextField;
-	@FXML
-	private TextField quantityTextField;;
-	@FXML
-	private TextArea descriptionTextField;
-	@FXML
-	private Label nameLabel;
-	@FXML
-	private Label desLabel;
-	@FXML
-	private Label priceLabel;
-	@FXML
-	private Label  quantityLabel;
-	@FXML
-	private Button addProduct;
+
+	
 	
 	/**
 	 * Handles the addition of a new product to both the linked list and AVL tree,
@@ -299,12 +331,7 @@ public class SceneController {
 	    }
 	}
 	
-	@FXML
-	private TextField idTextField;
-	@FXML
-	private Label idLabel;
-	@FXML
-	private Label warningLabel;
+
 	
 	/**
 	 * Handles updating an existing product in both the AVL tree and linked list.
@@ -444,7 +471,7 @@ public class SceneController {
 		
 	}
 	
-	public void deleteExistingProducts(ActionEvent event) throws IOException {
+	public void deleteExistingProducts(ActionEvent event) {
 	    int productId;
 	    
 	    // Clear previous messages
@@ -452,7 +479,7 @@ public class SceneController {
 	    warningLabel.setText("");
 	    
 	    try {
-	        // 1. Validate and collect product ID
+	        // Validate product ID
 	        try {
 	            productId = Integer.parseInt(idTextField.getText().trim());
 	            if (productId <= 0) {
@@ -464,44 +491,100 @@ public class SceneController {
 	            return;
 	        }
 	        
-	        // 2. Load existing catalog data
-	        CatalogManager catalogManager = new CatalogManager();
-	        ProductFileManager fileManager = new ProductFileManager();
+	        // Load AVL tree from file
+	        AVLFileManager avlFileManager = new AVLFileManager();
+	        AVL avl = avlFileManager.loadAVLTree();
 	        
-	        // 3. Search for the product in AVL tree
-	        Product existingProduct = catalogManager.searchProduct(productId);
-	        if (existingProduct == null) {
-	            warningLabel.setText("Product is not found in the system");
+	        // Check if product exists
+	        AVL.Node node = avl.productSearch(productId);
+	        if (node == null) {
+	            warningLabel.setText("Product not found in system");
 	            warningLabel.setTextFill(Color.RED);
 	            return;
 	        }
 	        
-	        // 4. Delete product from both data structures
-	        catalogManager.deleteProduct(productId);
+	        // Delete from AVL tree
+	        avl.deleteProduct(productId);
 	        
-	        try {
-	            // Delete from file (if exists)
-	            fileManager.deleteProduct(productId);
-	        } catch (IOException e) {
-	            System.out.println("Product not found in file, continuing...");
-	        }
+	        // Save updated AVL tree back to file
+	        avlFileManager.saveAVLTree(avl);
 	        
-	        // Save the updated AVL tree
-	        catalogManager.saveAVLTree();
+	        // Rebuild linked list from updated AVL tree
+	        CatalogManager catalogManager = new CatalogManager();
+	        catalogManager.setAvl(avl);
+	        catalogManager.rebuildLinkedListFromAVL();
 	        
-	        // Clear the ID field
+	        // Update CSV file
+	        new ProductFileManager().saveProducts(catalogManager.getLinkedList());
+	        
 	        idTextField.clear();
-	        
-	        // Show success message
 	        warningLabel.setText("Product deleted successfully!");
 	        warningLabel.setTextFill(Color.GREEN);
 	        
 	    } catch (Exception e) {
-	        System.err.println("Unexpected error during product deletion: " + e.getMessage());
-	        warningLabel.setText("An unexpected error occurred. Please try again.");
+	        warningLabel.setText("Error during deletion: " + e.getMessage());
 	        warningLabel.setTextFill(Color.RED);
 	    }
 	}
 	
+    
+	public void populateMainPage() {
+        try {
+            CatalogManager catalogManager = Main.getCatalogManager();
+            if (catalogManager == null) {
+                System.out.println("CatalogManager not initialized");
+                return;
+            }
+
+            CLinkedList<Product> productList = catalogManager.getLinkedList();
+            if (productList == null || productList.isEmpty()) {
+                System.out.println("No products to display");
+                return;
+            }
+
+            // Clear existing products
+            productsFlowPane.getChildren().clear();
+            
+            productsFlowPane.setHgap(15); // Horizontal space (left/right)
+            productsFlowPane.setVgap(10);  // Vertical space (top/bottom)
+           
+
+            // Load and display each product
+            Application.Node<Product> current = productList.getHead();
+            while (current != null) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("ItemPanelGUI.fxml"));
+                    VBox itemPanel = loader.load();
+                    
+                    // Set margins (top, right, bottom, left)
+                    VBox.setMargin(itemPanel, new Insets(10, 15, 10, 15)); // 10px top/bottom, 15px left/right
+                    
+                    // Get the controller for the product card
+                    ProductCardController cardController = loader.getController();
+                    
+                    // Set product data through the controller
+                    Product product = current.getData();
+                    cardController.setProduct(product);
+                    
+                 // Set margins (top, right, bottom, left)
+                    VBox.setMargin(itemPanel, new Insets(10, 15, 10, 15)); // 10px top/bottom, 15px left/right
+                    
+                    
+                    // Add to flow pane
+                    productsFlowPane.getChildren().add(itemPanel);
+                    
+                } catch (IOException ex) {
+                    System.err.println("Error loading product panel: " + ex.getMessage());
+                }
+                current = current.getNextNode();
+            }
+        } catch (Exception e) {
+            System.err.println("Error populating main page: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+   
+
 
 }

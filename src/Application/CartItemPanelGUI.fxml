@@ -11,16 +11,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefHeight="180.0" prefWidth="648.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<HBox prefHeight="180.0" prefWidth="648.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.CartCardController">
    <children>
-      <ImageView fitHeight="159.0" fitWidth="197.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="productImage" fitHeight="159.0" fitWidth="197.0" pickOnBounds="true" preserveRatio="true">
          <HBox.margin>
             <Insets />
          </HBox.margin>
       </ImageView>
       <VBox prefHeight="160.0" prefWidth="512.0">
          <children>
-            <Label prefHeight="32.0" prefWidth="353.0" text="Name">
+            <Label fx:id="nameLabel" prefHeight="32.0" prefWidth="353.0">
                <font>
                   <Font name="Arial" size="20.0" />
                </font>
@@ -28,7 +28,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label alignment="TOP_LEFT" prefHeight="67.0" prefWidth="343.0" text="Label">
+            <Label fx:id="desLabel" alignment="TOP_LEFT" prefHeight="67.0" prefWidth="343.0">
                <VBox.margin>
                   <Insets top="5.0" />
                </VBox.margin>
@@ -40,7 +40,7 @@
                <children>
                   <AnchorPane prefHeight="43.0" prefWidth="62.0">
                      <children>
-                        <Hyperlink layoutY="15.0" prefHeight="27.0" prefWidth="66.0" text="Remove" textFill="#ab0707" underline="true">
+                        <Hyperlink fx:id="removeHyperlink" layoutY="15.0" prefHeight="27.0" prefWidth="66.0" text="Remove" textFill="#ab0707" underline="true">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
@@ -49,7 +49,7 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Spinner editable="true" layoutY="16.0" prefHeight="25.0" prefWidth="49.0">
+                        <Spinner fx:id="quantitySpinner" editable="true" layoutY="9.0" prefHeight="32.0" prefWidth="59.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -58,7 +58,7 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Label alignment="BOTTOM_LEFT" contentDisplay="BOTTOM" layoutY="13.0" prefHeight="30.0" prefWidth="117.0" text="Total: $">
+                        <Label fx:id="totalLabel" alignment="BOTTOM_LEFT" contentDisplay="BOTTOM" layoutY="13.0" prefHeight="30.0" prefWidth="173.0">
                            <font>
                               <Font name="Arial" size="18.0" />
                            </font>
