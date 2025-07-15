@@ -54,7 +54,7 @@
                               <Font name="Arial" size="22.0" />
                            </font>
                         </Label>
-                        <Label fx:id="desLabel" alignment="TOP_LEFT" layoutX="-1.0" layoutY="30.0" prefHeight="240.0" prefWidth="582.0" text="Label">
+                        <Label fx:id="desLabel" alignment="TOP_LEFT" layoutX="-1.0" layoutY="30.0" prefHeight="240.0" prefWidth="582.0">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -86,7 +86,7 @@
                   </Pane>
                   <Pane prefHeight="101.0" prefWidth="576.0">
                      <children>
-                        <Button alignment="CENTER" layoutX="156.0" layoutY="20.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="264.0" text="Add To Cart">
+                        <Button fx:id="cartButton" alignment="CENTER" layoutX="156.0" layoutY="20.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="264.0" text="Add To Cart">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -105,7 +105,7 @@
    <top>
       <AnchorPane prefHeight="125.0" prefWidth="200.0" style="-fx-background-color: #465E75;" BorderPane.alignment="CENTER">
          <children>
-            <TextField layoutX="67.0" layoutY="43.0" maxWidth="1000.0" minWidth="200.0" prefHeight="40.0" prefWidth="500.0" promptText="Search" AnchorPane.leftAnchor="67.0" AnchorPane.rightAnchor="526.0">
+            <TextField layoutX="67.0" layoutY="43.0" maxWidth="1000.0" minWidth="200.0" onKeyPressed="#ProductSearchKey" prefHeight="40.0" prefWidth="500.0" promptText="Search" AnchorPane.leftAnchor="67.0" AnchorPane.rightAnchor="526.0">
                <cursor>
                   <Cursor fx:constant="TEXT" />
                </cursor>
@@ -113,7 +113,7 @@
                   <Font name="Arial" size="14.0" />
                </font>
             </TextField>
-            <Button contentDisplay="GRAPHIC_ONLY" layoutX="567.0" layoutY="43.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="476.0">
+            <Button contentDisplay="GRAPHIC_ONLY" layoutX="567.0" layoutY="43.0" mnemonicParsing="false" onAction="#ProductSearch" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="476.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -141,7 +141,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <Label alignment="CENTER" layoutX="1029.0" layoutY="26.0" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-border-color: grey; -fx-border-radius: 20;" text="1" textFill="#0c2897" AnchorPane.rightAnchor="30.0">
+            <Label fx:id="cartAmountLabel" alignment="CENTER" layoutX="1029.0" layoutY="26.0" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-border-color: grey; -fx-border-radius: 20;" textFill="#0c2897" AnchorPane.rightAnchor="30.0">
                <font>
                   <Font name="Bodoni MT" size="18.0" />
                </font></Label>
@@ -194,6 +194,11 @@
                </cursor>
             </ImageView>
             <Label layoutX="842.0" layoutY="103.0" text="Queue" AnchorPane.rightAnchor="215.0" />
+            <Label fx:id="searchLabel" layoutX="67.0" layoutY="11.0" prefHeight="32.0" prefWidth="398.0" textFill="#dd382f">
+               <font>
+                  <Font name="Bodoni MT" size="15.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </top>

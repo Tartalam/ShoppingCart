@@ -18,7 +18,7 @@
    <top>
       <AnchorPane prefHeight="125.0" prefWidth="200.0" style="-fx-background-color: #465E75;" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="searchTextField" layoutX="72.0" layoutY="43.0" maxWidth="450.0" minWidth="25.0" prefHeight="40.0" prefWidth="450.0" promptText="Search" AnchorPane.leftAnchor="72.0" AnchorPane.rightAnchor="555.0">
+            <TextField fx:id="searchTextField" layoutX="72.0" layoutY="43.0" maxWidth="450.0" minWidth="25.0" onKeyPressed="#ProductSearchKey" prefHeight="40.0" prefWidth="450.0" promptText="Search" AnchorPane.leftAnchor="72.0" AnchorPane.rightAnchor="555.0">
                <cursor>
                   <Cursor fx:constant="TEXT" />
                </cursor>

@@ -17,6 +17,8 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -61,6 +63,8 @@ public class SceneController {
 	@FXML private Label searchLabel;
 	@FXML private Label stockLabel;
 	@FXML private Spinner<Integer> quantitySpinner;
+	@FXML private Label queuePositionLabel;
+	@FXML private Button deliverButton;
 
 
 	
@@ -173,6 +177,22 @@ public class SceneController {
 	 * Switches to product page and populates it with the specified product
 	 */
 	private void switchToProductPageWithProduct(ActionEvent event, Product product) throws IOException {
+	    FXMLLoader loader = new FXMLLoader(getClass().getResource("ProductPageGUI.fxml"));
+	    root = loader.load();
+	    
+	    // Get the controller before showing the scene
+	    SceneController controller = loader.getController();
+	    
+	    stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    scene = new Scene(root);
+	    stage.setScene(scene);
+	    stage.show();
+	    
+	    // Populate the product page with the found product
+	    controller.populateProductPage(product);
+	}
+	
+	private void switchToProductPageWithProductKey(KeyEvent event, Product product) throws IOException {
 	    FXMLLoader loader = new FXMLLoader(getClass().getResource("ProductPageGUI.fxml"));
 	    root = loader.load();
 	    
@@ -741,6 +761,61 @@ public class SceneController {
 	}
 	
 	/**
+	 * Handles product search when Enter key is pressed in the search field
+	 * @param event The KeyEvent that triggered this method
+	 * @throws IOException If there's an error during scene switching
+	 */
+	public void ProductSearchKey(KeyEvent event) throws IOException {
+		
+	    // Check if the pressed key was Enter
+	    if (event.getCode() != KeyCode.ENTER) {
+	        return;
+	    }
+		
+	    String searchTerm = searchTextField.getText().trim();
+	    
+	    // Clear previous messages
+	    searchLabel.setText("");
+	    searchLabel.setTextFill(Color.BLACK);
+	    
+	    if (searchTerm.isEmpty()) {
+	        searchLabel.setText("Please enter a product name or ID to begin search");
+	        searchLabel.setTextFill(Color.RED);
+	        return;
+	    }
+	    
+	    try {
+	        CatalogManager catalogManager = Main.getCatalogManager();
+	        if (catalogManager == null) {
+	            throw new IllegalStateException("Catalog not initialized");
+	        }
+	        
+	        Product foundProduct = null;
+	        
+	        // Try searching by ID first
+	        try {
+	            int productId = Integer.parseInt(searchTerm);
+	            foundProduct = catalogManager.searchProduct(productId);
+	        } catch (NumberFormatException e) {
+	            // If not a number, search by name
+	            foundProduct = searchProductByName(searchTerm);
+	        }
+	        
+	        if (foundProduct != null) {
+	            // Switch to product page with the found product
+	            switchToProductPageWithProductKey(event, foundProduct);
+	        } else {
+	            searchLabel.setText("Product not found: " + searchTerm);
+	            searchLabel.setTextFill(Color.RED);
+	        }
+	    } catch (Exception e) {
+	        searchLabel.setText("Search error: " + e.getMessage());
+	        searchLabel.setTextFill(Color.RED);
+	        System.err.println("Search error: " + e.getMessage());
+	    }
+	}
+	
+	/**
 	 * Searches for a product by name in the AVL tree
 	 * @param name The product name to search for
 	 * @return The found Product or null if not found
@@ -770,16 +845,207 @@ public class SceneController {
 	        if (nameLabel != null) nameLabel.setText(product.getName());
 	        if (desLabel != null) desLabel.setText(product.getDescription());
 	        if (priceLabel != null) priceLabel.setText(String.format("$%.2f", product.getPrice()));
-	        
+	        updateCartAmountLabel();
 	        // Configure stock label
 	        updateStockLabel(product.getStockQuantity());
 	        
 	        // Configure quantity spinner
 	        configureQuantitySpinner(product.getStockQuantity());
 	        
+	     // Set up the Add to Cart button
+	        if (cartButton != null) {
+	            cartButton.setOnAction(e -> {
+	                int quantity = quantitySpinner.getValue();
+	                ShoppingCart cart = Main.getShoppingCart();
+	                
+	                // Check if product already exists in cart
+	                boolean productExistsInCart = cart.getCartContents().containsKey(product.getProductId());
+	                
+	                if (cart.addToCart(product.getProductId(), quantity)) {
+	                    updateCartAmountLabel();
+	                    showSuccessAlert("Added " + quantity + " " + product.getName() + "(s) to cart");
+	                    
+	                    // If product was already in cart, we need to force refresh the cart page
+	                    if (productExistsInCart) {
+	                        // This ensures the spinner in cart reflects the new total quantity
+	                        cart.updateQuantity(product.getProductId(), 
+	                            cart.getCartContents().get(product.getProductId()));
+	                    }
+	                } else {
+	                    showErrorAlert("Failed to add to cart. Check available stock.");
+	                }
+	            });
+	        }
+	        
 	    } catch (Exception e) {
 	        showErrorAlert("Error displaying product: " + e.getMessage());
 	        System.err.println("Error populating product page: " + e.getMessage());
+	    }
+	}
+	
+	public void OrderProducts(ActionEvent event) throws IOException {
+		 ShoppingCart cart = Main.getShoppingCart();
+		    Queue orderQueue = Main.getOrderQueue();
+		    CatalogManager catalogManager = Main.getCatalogManager();
+		    
+		    // Check if cart is empty
+		    if (cart.isEmpty()) {
+		        showErrorAlert("Your cart is empty. Please add items before placing an order.");
+		        return;
+		    }
+		    
+		    try {
+		        // Generate a single order number for this order instance
+		        OrderNumber orderNumber = new OrderNumber();
+		        int generatedOrderNum = orderNumber.generateOrderNumber();
+		        
+		        // Process all items in cart
+		        Map<Integer, Integer> cartContents = cart.getCartContents();
+		        for (Map.Entry<Integer, Integer> entry : cartContents.entrySet()) {
+		            int productId = entry.getKey();
+		            int quantity = entry.getValue();
+		            
+		            // Update product stock in catalog (quantity already deducted by ShoppingCart)
+		            Product product = catalogManager.searchProduct(productId);
+		            if (product != null) {
+		                // Update the product in the file
+		                new ProductFileManager().updateProductInFile(product);
+		            }
+		        }
+		        
+		        // Add the single order number to queue
+		        orderQueue.add(generatedOrderNum);
+		        
+		        // Save the queue to file
+		        orderQueue.saveToFile();
+		        
+		        // Clear the cart
+		        cart.clearCart();
+		        
+		        // Update UI
+		        updateGrandTotal();
+		        updateCartAmountLabel();
+		        
+		        // Show success message with the order number
+		        showSuccessAlert("Order #" + generatedOrderNum + " placed successfully!");
+		        
+		        // Refresh the cart view
+		        populateCartPage();
+		        
+		    } catch (Exception e) {
+		        showErrorAlert("Failed to place order: " + e.getMessage());
+		        System.err.println("Error placing order: " + e.getMessage());
+		        e.printStackTrace();
+		    }
+		
+	}
+	
+	/**
+	 * Handles order position lookup when searching for an order number.
+	 * Validates input, searches the queue, and displays the order's position.
+	 * Disables/enables the delivery button based on position.
+	 * 
+	 * @param event The action event that triggered this method
+	 */
+	public void OrderPosition(ActionEvent event) {
+	    String searchText = searchTextField.getText().trim();
+	    searchLabel.setText(""); // Clear previous messages
+	    searchLabel.setTextFill(Color.BLACK);
+	    
+	    try {
+	        // Validate input
+	        if (searchText.isEmpty()) {
+	            throw new IllegalArgumentException("Please enter an order number");
+	        }
+	        
+	        int orderNumber;
+	        try {
+	            orderNumber = Integer.parseInt(searchText);
+	        } catch (NumberFormatException e) {
+	            throw new IllegalArgumentException("Order number must be a number");
+	        }
+	        
+	        if (orderNumber <= 0) {
+	            throw new IllegalArgumentException("Order number must be positive");
+	        }
+	        
+	        // Get queue instance
+	        Queue orderQueue = Main.getOrderQueue();
+	        if (orderQueue == null) {
+	            throw new IllegalStateException("Order queue not initialized");
+	        }
+	        
+	        // Find position in queue
+	        int position = orderQueue.findOrderNumberPosition(orderNumber);
+	        
+	        if (position == -1) {
+	            throw new IllegalArgumentException("Order #" + orderNumber + " not found in queue");
+	        }
+	        
+	        // Update UI
+	        queuePositionLabel.setText(String.valueOf(position + 1)); // Show 1-based position
+	        
+	        // Enable/disable delivery button
+	        deliverButton.setDisable(position != 0);
+	        
+	    } catch (IllegalArgumentException e) {
+	        searchLabel.setText(e.getMessage());
+	        searchLabel.setTextFill(Color.RED);
+	        queuePositionLabel.setText("");
+	        deliverButton.setDisable(true);
+	    } catch (Exception e) {
+	        searchLabel.setText("System error processing order");
+	        searchLabel.setTextFill(Color.RED);
+	        System.err.println("Error processing order position: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+	
+	/**
+	 * Handles order delivery when the delivery button is pressed.
+	 * Dequeues the order from the queue and updates the queue file.
+	 * Only works when the order is at position 1 (front of queue).
+	 * 
+	 * @param event The action event that triggered this method
+	 */
+	public void OrderDelivery(ActionEvent event) {
+	    try {
+	        Queue orderQueue = Main.getOrderQueue();
+	        if (orderQueue == null) {
+	            throw new IllegalStateException("Order queue not initialized");
+	        }
+	        
+	        // Verify there's an order to deliver
+	        if (orderQueue.isEmpty()) {
+	            throw new IllegalStateException("No orders in queue");
+	        }
+	        
+	        // Get the order number at front of queue
+	        OrderNumber deliveredOrder = orderQueue.dequeue();
+	        
+	        // Save updated queue to file
+	        orderQueue.saveToFile();
+	        
+	        // Update UI
+	        searchLabel.setText("Order #" + deliveredOrder.getOrderNumber() + " delivered successfully");
+	        searchLabel.setTextFill(Color.GREEN);
+	        queuePositionLabel.setText("");
+	        searchTextField.clear();
+	        deliverButton.setDisable(true);
+	        
+	    } catch (IllegalStateException e) {
+	        searchLabel.setText(e.getMessage());
+	        searchLabel.setTextFill(Color.RED);
+	    } catch (IOException e) {
+	        searchLabel.setText("Failed to update order queue file");
+	        searchLabel.setTextFill(Color.RED);
+	        System.err.println("Error saving queue file: " + e.getMessage());
+	        e.printStackTrace();
+	    } catch (Exception e) {
+	        searchLabel.setText("System error delivering order");
+	        searchLabel.setTextFill(Color.RED);
+	        System.err.println("Error delivering order: " + e.getMessage());
+	        e.printStackTrace();
 	    }
 	}
 	
@@ -808,7 +1074,7 @@ public class SceneController {
 	        }
 	        
 	        // Update stock display
-	        updateStockLabel(maxQuantity - newValue);
+	        //updateStockLabel(maxQuantity - newValue);
 	    });
 	}
 	

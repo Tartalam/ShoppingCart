@@ -1,5 +1,7 @@
 package Application;
 
+import java.util.Map;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -92,8 +94,12 @@ public class CartCardController {
     private void configureSpinner(int initialQuantity) {
         if (quantitySpinner == null) return;
         
+     // Get current quantity from cart to ensure we have the latest value
+        Map<Integer, Integer> cartContents = Main.getShoppingCart().getCartContents();
+        int currentQuantity = cartContents.getOrDefault(product.getProductId(), initialQuantity);
+        
         SpinnerValueFactory.IntegerSpinnerValueFactory factory = 
-            new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, initialQuantity);
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, currentQuantity);
         quantitySpinner.setValueFactory(factory);
         
         quantitySpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
