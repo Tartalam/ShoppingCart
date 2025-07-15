@@ -1,6 +1,7 @@
 package Application;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -8,13 +9,17 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -27,61 +32,52 @@ public class SceneController {
 	private Scene scene;
 	private Parent root;
 	
-	@FXML
-	private TextField searchTextField;
-	@FXML
-	private Button submitButton;
-	@FXML
-	private Label cartAmount;
-	@FXML
-	private Label userLabel;
-	@FXML
-	private TextField idTextField;
-	@FXML
-	private Label idLabel;
-	@FXML
-	private Label warningLabel;
-	@FXML
-	private TextField nameTextField ;
-	@FXML
-	private TextField priceTextField;
-	@FXML
-	private TextField quantityTextField;;
-	@FXML
-	private TextArea descriptionTextField;
-	@FXML
-	private Label nameLabel;
-	@FXML
-	private Label desLabel;
-	@FXML
-	private Label priceLabel;
-	@FXML
-	private Label  quantityLabel;
-	@FXML
-	private Button addProduct;
-	@FXML
-	private ImageView productImage;
-	@FXML
-	private Button cartButton;
-	@FXML
-	private FlowPane productsFlowPane;
+	@SuppressWarnings("unused")
+	private static SceneController mainPageController;
+	
+	
+	@FXML private TextField searchTextField;
+	@FXML private Button submitButton;
+	@FXML private Label cartAmount;
+	@FXML private TextField idTextField;
+	@FXML private Label idLabel;
+	@FXML private Label warningLabel;
+	@FXML private TextField nameTextField ;
+	@FXML private TextField priceTextField;
+	@FXML private TextField quantityTextField;;
+	@FXML private TextArea descriptionTextField;
+	@FXML private Label nameLabel;
+	@FXML private Label desLabel;
+	@FXML private Label priceLabel;
+	@FXML private Label  quantityLabel;
+	@FXML private Button addProduct;
+	@FXML private ImageView productImage;
+	@FXML private Button cartButton;
+	@FXML private FlowPane productsFlowPane;
 	@FXML private TilePane cartTilePane;
 	@FXML private Button orderButton;
 	@FXML private Label grandTotalLabel;
+	@FXML private Label cartAmountLabel;
+	@FXML private Label searchLabel;
+	@FXML private Label stockLabel;
+	@FXML private Spinner<Integer> quantitySpinner;
+
 
 	
-	
 	// Switch to the main product page.
-	public void switchToMainPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("MainPageGUI.fxml"));
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
-		
-		//Populate products after loading
-		populateMainPage();
-		
+	public void switchToMainPage(MouseEvent event) throws IOException {
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainPageGUI.fxml"));
+        Parent root = loader.load();
+        
+        SceneController controller = loader.getController();
+        // No need to re-inject dependencies since we're using Main.getCatalogManager()
+        
+        stage.setScene(new Scene(root));
+        stage.show();
+        
+        // Force a refresh of products
+        controller.populateMainPage();    // ← Now items will show up!
 	}
 	
 	// Switch to the page to add product.
@@ -97,11 +93,19 @@ public class SceneController {
 	
 	// Switch to the cart page.
 	public void switchToCartPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("CartGUI.fxml"));
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("CartGUI.fxml"));
+	    root = loader.load();
+	    
+	    // Get the controller before showing the scene
+	    SceneController controller = loader.getController();
+	    
+	    stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    scene = new Scene(root);
+	    stage.setScene(scene);
+	    stage.show();
+	    
+	    // Now populate the cart
+	    controller.populateCartPage();
 		
 	}
 	
@@ -165,14 +169,23 @@ public class SceneController {
 		
 	}
 	
-	//switch to product page.
-	public void switchToProductPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("ProductPageGUI.fxml"));
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
-		
+	/**
+	 * Switches to product page and populates it with the specified product
+	 */
+	private void switchToProductPageWithProduct(ActionEvent event, Product product) throws IOException {
+	    FXMLLoader loader = new FXMLLoader(getClass().getResource("ProductPageGUI.fxml"));
+	    root = loader.load();
+	    
+	    // Get the controller before showing the scene
+	    SceneController controller = loader.getController();
+	    
+	    stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	    scene = new Scene(root);
+	    stage.setScene(scene);
+	    stage.show();
+	    
+	    // Populate the product page with the found product
+	    controller.populateProductPage(product);
 	}
 	
 	//switch to registration page
@@ -298,7 +311,7 @@ public class SceneController {
 	        Product newProduct = new Product(productId, name, description, price, quantity);
 	        
 	        // 8. Add product to data structures
-	        CatalogManager catalogManager = new CatalogManager();
+	        CatalogManager catalogManager = Main.getCatalogManager();
 	        catalogManager.insertProductAtFront(newProduct);
 	        
 	        // 9. Save updated product list to file
@@ -329,6 +342,9 @@ public class SceneController {
 	        nameLabel.setText("An unexpected error occurred. Please try again.");
 	        nameLabel.setTextFill(Color.RED);
 	    }
+	    
+	    
+	    
 	}
 	
 
@@ -373,7 +389,7 @@ public class SceneController {
 	        }
 	        
 	        // 2. Load existing catalog data
-	        CatalogManager catalogManager = new CatalogManager();
+	        CatalogManager catalogManager = Main.getCatalogManager();
 	        ProductFileManager fileManager = new ProductFileManager();
 	        
 	        // 3. Search for the product in AVL tree
@@ -468,10 +484,11 @@ public class SceneController {
 	        warningLabel.setTextFill(Color.RED);
 	    }
 	    
+	    
 		
 	}
 	
-	public void deleteExistingProducts(ActionEvent event) {
+	public void deleteExistingProducts(ActionEvent event) throws IOException {
 	    int productId;
 	    
 	    // Clear previous messages
@@ -510,7 +527,7 @@ public class SceneController {
 	        avlFileManager.saveAVLTree(avl);
 	        
 	        // Rebuild linked list from updated AVL tree
-	        CatalogManager catalogManager = new CatalogManager();
+	        CatalogManager catalogManager = Main.getCatalogManager();
 	        catalogManager.setAvl(avl);
 	        catalogManager.rebuildLinkedListFromAVL();
 	        
@@ -525,66 +542,342 @@ public class SceneController {
 	        warningLabel.setText("Error during deletion: " + e.getMessage());
 	        warningLabel.setTextFill(Color.RED);
 	    }
+	    
+	    
 	}
 	
     
+	/**
+	 * Populates the main product display page with product cards loaded from the catalog.
+	 * This method:
+	 * 1. Clears existing products from the view
+	 * 2. Sets up the layout properties
+	 * 3. Loads each product from the catalog into individual cards
+	 * 4. Sets up event handlers for the "Add to Cart" buttons
+	 * 5. Handles errors gracefully at each step
+	 */
+	@SuppressWarnings("unused")
 	public void populateMainPage() {
-        try {
-            CatalogManager catalogManager = Main.getCatalogManager();
-            if (catalogManager == null) {
-                System.out.println("CatalogManager not initialized");
-                return;
-            }
+		 System.out.println("[DEBUG] populateMainPage() called");
+		    
+		    if (productsFlowPane == null) {
+		        System.err.println("ERROR: productsFlowPane is null!");
+		        return;
+		    }
+		    productsFlowPane.getChildren().clear();
 
-            CLinkedList<Product> productList = catalogManager.getLinkedList();
-            if (productList == null || productList.isEmpty()) {
-                System.out.println("No products to display");
-                return;
-            }
+		    // Always get the latest instances from Main
+		    CatalogManager catalogManager = Main.getCatalogManager();
+		   
+			ShoppingCart shoppingCart = Main.getShoppingCart();  // ← Added this line
 
-            // Clear existing products
-            productsFlowPane.getChildren().clear();
-            
-            productsFlowPane.setHgap(15); // Horizontal space (left/right)
-            productsFlowPane.setVgap(10);  // Vertical space (top/bottom)
-           
+		    if (catalogManager == null || catalogManager.getLinkedList() == null) {
+		        System.err.println("ERROR: Catalog data not loaded!");
+		        showErrorAlert("Product catalog not available.");
+		        return;
+		    }
 
-            // Load and display each product
-            Application.Node<Product> current = productList.getHead();
-            while (current != null) {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("ItemPanelGUI.fxml"));
-                    VBox itemPanel = loader.load();
-                    
-                    // Set margins (top, right, bottom, left)
-                    VBox.setMargin(itemPanel, new Insets(10, 15, 10, 15)); // 10px top/bottom, 15px left/right
-                    
-                    // Get the controller for the product card
-                    ProductCardController cardController = loader.getController();
-                    
-                    // Set product data through the controller
-                    Product product = current.getData();
-                    cardController.setProduct(product);
-                    
-                 // Set margins (top, right, bottom, left)
-                    VBox.setMargin(itemPanel, new Insets(10, 15, 10, 15)); // 10px top/bottom, 15px left/right
-                    
-                    
-                    // Add to flow pane
-                    productsFlowPane.getChildren().add(itemPanel);
-                    
-                } catch (IOException ex) {
-                    System.err.println("Error loading product panel: " + ex.getMessage());
-                }
-                current = current.getNextNode();
-            }
-        } catch (Exception e) {
-            System.err.println("Error populating main page: " + e.getMessage());
-            e.printStackTrace();
+		    CLinkedList<Product> productList = catalogManager.getLinkedList();
+		    if (productList.isEmpty()) {
+		        System.out.println("INFO: No products in catalog.");
+		        return;
+		    }
+
+		    // Configure layout and load product cards
+		    productsFlowPane.setHgap(20);
+		    productsFlowPane.setVgap(20);
+		    productsFlowPane.setPadding(new Insets(15));
+
+		    for (Application.Node<Product> current = productList.getHead(); 
+		         current != null; 
+		         current = current.getNextNode()) {
+		        
+		        Product product = current.getData();
+		        if (product == null) continue;
+
+		        try {
+		            FXMLLoader loader = new FXMLLoader(
+		                getClass().getResource("ItemPanelGUI.fxml")
+		            );
+		            VBox productCard = loader.load();
+		            ProductCardController cardController = loader.getController();
+		            cardController.setProduct(product);
+
+		            // Set up "Add to Cart" button (uses Main.getShoppingCart())
+		            Button cartButton = (Button) productCard.lookup("#cartButton");
+		            if (cartButton != null) {
+		                cartButton.setOnAction(e -> {
+		                    if (Main.getShoppingCart().addToCart(product.getProductId(), 1)) {  // ← Updated
+		                        updateCartAmountLabel();
+		                        showSuccessAlert("Added to cart: " + product.getName());
+		                    }
+		                });
+		            }
+
+		            productsFlowPane.getChildren().add(productCard);
+		        } catch (IOException e) {
+		            System.err.println("Failed to load product card: " + product.getName());
+		        }
+		    }
+		    
+		    updateCartAmountLabel();
+    }
+	
+
+	public void populateCartPage(){
+		 System.out.println("[DEBUG] populateCartPage() called");
+		    
+		    // Clear existing items
+		    if (cartTilePane == null) {
+		        System.err.println("ERROR: cartTilePane is null!");
+		        return;
+		    }
+		    cartTilePane.getChildren().clear();
+
+		    // Get shopping cart instance
+		    ShoppingCart shoppingCart = Main.getShoppingCart();
+		    CatalogManager catalogManager = Main.getCatalogManager();
+		    
+		    if (shoppingCart == null || catalogManager == null) {
+		        System.err.println("ERROR: Shopping cart or catalog not initialized!");
+		        showErrorAlert("Shopping system not available.");
+		        return;
+		    }
+
+		    // Get cart contents and populate the view
+		    Map<Integer, Integer> cartContents = shoppingCart.getCartContents();
+		    if (cartContents.isEmpty()) {
+		        System.out.println("INFO: Cart is empty.");
+		        return;
+		    }
+
+		    // Configure layout
+		    cartTilePane.setHgap(20);
+		    cartTilePane.setVgap(20);
+		    cartTilePane.setPadding(new Insets(15));
+
+		    // Create a card for each item in the cart
+		    for (Map.Entry<Integer, Integer> entry : cartContents.entrySet()) {
+		        int productId = entry.getKey();
+		        int quantity = entry.getValue();
+		        
+		        Product product = catalogManager.searchProduct(productId);
+		        if (product == null) {
+		            System.err.println("WARNING: Product not found in catalog: " + productId);
+		            continue;
+		        }
+
+		        try {
+		            FXMLLoader loader = new FXMLLoader(
+		                getClass().getResource("CartItemPanelGUI.fxml")
+		            );
+		            HBox cartItemCard = loader.load();
+		            
+		            // Set up the controller with product data
+		            CartCardController cardController = loader.getController();
+		            cardController.setCartItem(product, quantity, this::updateGrandTotal);
+		            
+		            cartTilePane.getChildren().add(cartItemCard);
+		        } catch (IOException e) {
+		            System.err.println("Failed to load cart item card: " + product.getName());
+		            showErrorAlert("Failed to display cart item: " + product.getName());
+		        }
+		    }
+		    
+		    // Update the grand total display
+		    updateGrandTotal();
+		    //0+87++8updateCartAmountLabel();
+    }
+	
+	/**
+	 * Handles product search functionality by either product ID or name.
+	 * Searches the AVL tree and switches to product page if found.
+	 * 
+	 * @param event The button action event that triggered this method
+	 * @throws IOException If there's an error during scene switching
+	 */
+	public void ProductSearch(ActionEvent event) throws IOException {
+	    String searchTerm = searchTextField.getText().trim();
+	    
+	    // Clear previous messages
+	    searchLabel.setText("");
+	    searchLabel.setTextFill(Color.BLACK);
+	    
+	    if (searchTerm.isEmpty()) {
+	        searchLabel.setText("Please enter a product name or ID to begin search");
+	        searchLabel.setTextFill(Color.RED);
+	        return;
+	    }
+	    
+	    try {
+	        CatalogManager catalogManager = Main.getCatalogManager();
+	        if (catalogManager == null) {
+	            throw new IllegalStateException("Catalog not initialized");
+	        }
+	        
+	        Product foundProduct = null;
+	        
+	        // Try searching by ID first
+	        try {
+	            int productId = Integer.parseInt(searchTerm);
+	            foundProduct = catalogManager.searchProduct(productId);
+	        } catch (NumberFormatException e) {
+	            // If not a number, search by name
+	            foundProduct = searchProductByName(searchTerm);
+	        }
+	        
+	        if (foundProduct != null) {
+	            // Switch to product page with the found product
+	            switchToProductPageWithProduct(event, foundProduct);
+	        } else {
+	            searchLabel.setText("Product not found: " + searchTerm);
+	            searchLabel.setTextFill(Color.RED);
+	        }
+	    } catch (Exception e) {
+	        searchLabel.setText("Search error: " + e.getMessage());
+	        searchLabel.setTextFill(Color.RED);
+	        System.err.println("Search error: " + e.getMessage());
+	    }
+	}
+	
+	/**
+	 * Searches for a product by name in the AVL tree
+	 * @param name The product name to search for
+	 * @return The found Product or null if not found
+	 */
+	private Product searchProductByName(String name) {
+	    CatalogManager catalogManager = Main.getCatalogManager();
+	    if (catalogManager == null || catalogManager.getAvl() == null) {
+	        return null;
+	    }
+	    
+	    // Perform in-order traversal to find product by name
+	    return searchProductByNameHelper(catalogManager.getAvl().getHead(), name.toLowerCase());
+	}
+	
+	/**
+	 * Populates the product page with information from the specified product
+	 * @param product The product to display
+	 */
+	public void populateProductPage(Product product) {
+	    if (product == null) {
+	        showErrorAlert("Product information not available");
+	        return;
+	    }
+	    
+	    try {
+	        // Set basic product information
+	        if (nameLabel != null) nameLabel.setText(product.getName());
+	        if (desLabel != null) desLabel.setText(product.getDescription());
+	        if (priceLabel != null) priceLabel.setText(String.format("$%.2f", product.getPrice()));
+	        
+	        // Configure stock label
+	        updateStockLabel(product.getStockQuantity());
+	        
+	        // Configure quantity spinner
+	        configureQuantitySpinner(product.getStockQuantity());
+	        
+	    } catch (Exception e) {
+	        showErrorAlert("Error displaying product: " + e.getMessage());
+	        System.err.println("Error populating product page: " + e.getMessage());
+	    }
+	}
+	
+	/**
+	 * Configures the quantity spinner with proper limits
+	 * @param maxQuantity The maximum available quantity (stock)
+	 */
+	@SuppressWarnings("unused")
+	private void configureQuantitySpinner(int maxQuantity) {
+	    if (quantitySpinner == null) return;
+	    
+	    // Set spinner to allow values between 1 and either maxQuantity or 100, whichever is smaller
+	    int upperLimit = Math.min(maxQuantity, 100);
+	    SpinnerValueFactory.IntegerSpinnerValueFactory factory = 
+	        new SpinnerValueFactory.IntegerSpinnerValueFactory(1, upperLimit, 1);
+	    
+	    quantitySpinner.setValueFactory(factory);
+	    
+	    // Add listener to handle stock changes
+	    quantitySpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+	        if (newValue == null) return;
+	        
+	        // Ensure we don't exceed available stock
+	        if (newValue > maxQuantity) {
+	            quantitySpinner.getValueFactory().setValue(maxQuantity);
+	        }
+	        
+	        // Update stock display
+	        updateStockLabel(maxQuantity - newValue);
+	    });
+	}
+	
+	/**
+	 * Updates the stock label with appropriate message and color
+	 * @param stockQuantity The current stock quantity
+	 */
+	private void updateStockLabel(int stockQuantity) {
+	    if (stockLabel == null) return;
+	    
+	    if (stockQuantity < 20) {
+	        stockLabel.setText("Low stock! Only " + stockQuantity + " remaining");
+	        stockLabel.setTextFill(Color.RED);
+	    } else {
+	        stockLabel.setText("In stock: " + stockQuantity + " available");
+	        stockLabel.setTextFill(Color.BLUE);
+	    }
+	}
+	
+	/**
+	 * Recursive helper method for name search
+	 */
+	private Product searchProductByNameHelper(AVL.Node node, String searchName) {
+	    if (node == null) {
+	        return null;
+	    }
+	    
+	    // Search left subtree first
+	    Product leftResult = searchProductByNameHelper(node.getLeft(), searchName);
+	    if (leftResult != null) {
+	        return leftResult;
+	    }
+	    
+	    // Check current node
+	    if (node.getData().getName().toLowerCase().contains(searchName)) {
+	        return node.getData();
+	    }
+	    
+	    // Search right subtree
+	    return searchProductByNameHelper(node.getRight(), searchName);
+	}
+	
+	private void updateGrandTotal() {
+        if (grandTotalLabel != null) {
+            grandTotalLabel.setText(String.format("$%.2f", Main.getShoppingCart().getTotalCost()));
         }
     }
-
-   
+	
+	 private void updateCartAmountLabel() {
+	        if (cartAmountLabel != null) {
+	            cartAmountLabel.setText(String.valueOf(Main.getShoppingCart().getTotalItemCount()));
+	        }
+	    }
+	 
+	 private void showSuccessAlert(String message) {
+		    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		    alert.setTitle("Success");
+		    alert.setHeaderText(null);
+		    alert.setContentText(message);
+		    alert.showAndWait();
+		}
+	 
+	 private void showErrorAlert(String message) {
+		    Alert alert = new Alert(Alert.AlertType.ERROR);
+		    alert.setTitle("Error");
+		    alert.setHeaderText(null);
+		    alert.setContentText(message);
+		    alert.showAndWait();
+		}
 
 
 }

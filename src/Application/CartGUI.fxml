@@ -15,22 +15,17 @@
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TilePane alignment="BASELINE_LEFT" prefColumns="1" prefHeight="551.0" prefRows="200" prefTileHeight="200.0" prefTileWidth="750.0" prefWidth="1350.0" style="-fx-background-color: DBDDDF;" HBox.hgrow="SOMETIMES" />
+            <TilePane fx:id="cartTilePane" alignment="BASELINE_LEFT" prefColumns="1" prefHeight="551.0" prefRows="200" prefTileHeight="200.0" prefTileWidth="750.0" prefWidth="1350.0" style="-fx-background-color: DBDDDF;" HBox.hgrow="SOMETIMES" />
             <Pane prefHeight="551.0" prefWidth="926.0" style="-fx-background-color: DBDDDF;">
                <children>
                   <Pane layoutX="38.0" layoutY="34.0" prefHeight="483.0" prefWidth="257.0" style="-fx-background-color: #f8f8f8;">
                      <children>
-                        <Label layoutX="64.0" layoutY="38.0" prefHeight="33.0" prefWidth="129.0" text="Item Value:">
+                        <Label alignment="CENTER" layoutX="43.0" layoutY="57.0" prefHeight="33.0" prefWidth="172.0" text="Total Cost:">
                            <font>
-                              <Font name="System Bold" size="15.0" />
+                              <Font name="Arial Bold" size="30.0" />
                            </font>
                         </Label>
-                        <Label layoutX="60.0" layoutY="144.0" prefHeight="33.0" prefWidth="129.0" text="Total Cost:">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Button layoutX="63.0" layoutY="302.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A; -fx-background-radius: 10;" text="Order" textFill="WHITE">
+                        <Button fx:id="orderButton" layoutX="63.0" layoutY="302.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A; -fx-background-radius: 10;" text="Order" textFill="WHITE">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -38,14 +33,9 @@
                               <Font name="Arial Rounded MT Bold" size="20.0" />
                            </font>
                         </Button>
-                        <Label layoutX="72.0" layoutY="65.0" prefHeight="43.0" prefWidth="86.0" text="\$">
+                        <Label fx:id="grandTotalLabel" alignment="CENTER" layoutX="50.0" layoutY="155.0" prefHeight="43.0" prefWidth="157.0" text="\$">
                            <font>
-                              <Font name="Arial Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="72.0" layoutY="169.0" prefHeight="43.0" prefWidth="86.0" text="\$">
-                           <font>
-                              <Font name="Arial Bold" size="15.0" />
+                              <Font name="Arial Bold" size="20.0" />
                            </font>
                         </Label>
                         <Hyperlink layoutX="104.0" layoutY="345.0" onMouseClicked="#switchToMainPage" text="Home" textFill="#a11212" underline="true" />

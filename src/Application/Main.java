@@ -22,7 +22,7 @@ public class Main extends Application {
     private static ShoppingCart shoppingCart;
     private static Queue orderQueue;
     
-    private static final String PRODUCTS_FILE = "products.csv";
+	private static final String PRODUCTS_FILE = "products.csv";
     private static final String CART_FILE = "cart.ser";
     private static final String STACK_FILE = "stack.ser";
     private static final String QUEUE_FILE = "Queue.csv";
@@ -93,6 +93,7 @@ public class Main extends Application {
             }
         };
 
+
         // Bind UI to task progress
         progressBar.progressProperty().bind(loadingTask.progressProperty());
         statusLabel.textProperty().bind(loadingTask.messageProperty());
@@ -102,15 +103,14 @@ public class Main extends Application {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("MainPageGUI.fxml"));
                 Parent root = loader.load();
-                
-                // Get controller and populate products
-                SceneController controller = loader.getController();
-                controller.populateMainPage();
-                
                 Scene scene = new Scene(root);
                 scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
                 primaryStage.setScene(scene);
                 primaryStage.show();
+                
+                SceneController controller = loader.getController();
+
+                controller.populateMainPage();
             } catch (Exception ex) {
                 handleStartupError(ex);
             }
@@ -124,7 +124,9 @@ public class Main extends Application {
         new Thread(loadingTask).start();
     }
 
-    private Map<Integer, Product> createProductCatalog() {
+
+
+	private Map<Integer, Product> createProductCatalog() {
         Map<Integer, Product> productMap = new HashMap<>();
         if (catalogManager.getAvl().getHead() != null) {
             addProductsToMap(catalogManager.getAvl().getHead(), productMap);
@@ -159,4 +161,11 @@ public class Main extends Application {
     public static CatalogManager getCatalogManager() { return catalogManager; }
     public static ShoppingCart getShoppingCart() { return shoppingCart; }
     public static Queue getOrderQueue() { return orderQueue; }
+    public static void setCatalogManager(CatalogManager catalogManager) {
+		Main.catalogManager = catalogManager;
+	}
+
+	public static void setShoppingCart(ShoppingCart shoppingCart) {
+		Main.shoppingCart = shoppingCart;
+	}
 }

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -17,10 +18,13 @@
          <HBox.margin>
             <Insets />
          </HBox.margin>
+         <image>
+            <Image url="@../images/shopping-cart.png" />
+         </image>
       </ImageView>
       <VBox prefHeight="160.0" prefWidth="512.0">
          <children>
-            <Label fx:id="nameLabel" prefHeight="32.0" prefWidth="353.0">
+            <Label fx:id="nameLabel" prefHeight="32.0" prefWidth="464.0">
                <font>
                   <Font name="Arial" size="20.0" />
                </font>
@@ -28,7 +32,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label fx:id="desLabel" alignment="TOP_LEFT" prefHeight="67.0" prefWidth="343.0">
+            <Label fx:id="desLabel" alignment="TOP_LEFT" prefHeight="67.0" prefWidth="459.0">
                <VBox.margin>
                   <Insets top="5.0" />
                </VBox.margin>
@@ -49,7 +53,7 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Spinner fx:id="quantitySpinner" editable="true" layoutY="9.0" prefHeight="32.0" prefWidth="59.0">
+                        <Spinner fx:id="quantitySpinner" editable="true" layoutX="37.0" layoutY="6.0" prefHeight="32.0" prefWidth="59.0">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -58,7 +62,7 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="totalLabel" alignment="BOTTOM_LEFT" contentDisplay="BOTTOM" layoutY="13.0" prefHeight="30.0" prefWidth="173.0">
+                        <Label fx:id="totalLabel" alignment="BOTTOM_LEFT" contentDisplay="BOTTOM" prefHeight="43.0" prefWidth="191.0">
                            <font>
                               <Font name="Arial" size="18.0" />
                            </font>

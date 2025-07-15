@@ -177,4 +177,37 @@ public class ShoppingCart {
     	        operationStack = new Stack<>();
     	    }
     }
+    
+    public boolean updateQuantity(int productId, int newQuantity) {
+        if (newQuantity <= 0) {
+            return removeFromCart(productId);
+        }
+        
+        if (!cart.containsKey(productId)) {
+            return false;
+        }
+        
+        Product product = catalog.get(productId);
+        if (product == null) {
+            return false;
+        }
+        
+        int currentQuantity = cart.get(productId);
+        int difference = newQuantity - currentQuantity;
+        
+        if (difference > 0) {
+            // Adding more items
+            if (product.getStockQuantity() < difference) {
+                return false;
+            }
+            product.decreaseStock(difference);
+        } else {
+            // Removing items
+            product.increaseStock(-difference);
+        }
+        
+        cart.put(productId, newQuantity);
+        saveToFile();
+        return true;
+    }
 }

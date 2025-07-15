@@ -16,12 +16,12 @@ public class ProductCardController {
         desLabel.setText(product.getDescription());
         priceLabel.setText(String.format("$%.2f", product.getPrice()));
         
-        // Set fixed image as specified
-        try {
-            productImage.setImage(new Image(getClass().getResourceAsStream("../images/shopping-cart.png")));
-        } catch (Exception e) {
-            System.err.println("Error loading product image: " + e.getMessage());
-            // Optionally set a placeholder image
-        }
+//        // Set fixed image as specified
+//        try {
+//            productImage.setImage(new Image(getClass().getResourceAsStream("../images/shopping-cart.png")));
+//        } catch (Exception e) {
+//            System.err.println("Error loading product image: " + e.getMessage());
+//            // Optionally set a placeholder image
+//        }
     }
 }
