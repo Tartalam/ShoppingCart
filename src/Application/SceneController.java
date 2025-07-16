@@ -10,8 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
 
 public class SceneController {
 	@FXML
@@ -158,56 +156,5 @@ public class SceneController {
 		
 	}
 	
-	//Switch to the user profile page
-	public void switchToUserProfilePage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("UserProfileGUI.fxml"));
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
-		
-	}
-	
-	//Switch to the order history page
-	public void switchToOrderHistoryPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("OrderHistoryGUI.fxml"));
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
-		
-	}
-	
-	//Switch to the settings page
-	public void switchToSettingsPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("SettingsGUI.fxml"));
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
-		
-	}
-	
-	//Switch to the help and support page
-	public void switchToHelpSupportPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("HelpSupportGUI.fxml"));
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
-		
-	}
-	
-    @FXML private TextField phoneField;
-    @FXML private TextField addressField;
-
-    @FXML
-    private void handleUpdateProfile(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Profile Updated");
-        alert.setHeaderText(null);
-        alert.setContentText("Your profile has been updated successfully!");
-        alert.showAndWait();
-    }
 
 }

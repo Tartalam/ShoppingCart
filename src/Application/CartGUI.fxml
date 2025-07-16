@@ -14,16 +14,14 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.Tooltip?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="1087.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.SceneController">
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TilePane fx:id="cartItemsPane" alignment="BASELINE_LEFT" prefColumns="1" prefHeight="551.0" prefRows="100" prefTileHeight="200.0" prefTileWidth="750.0" prefWidth="1350.0" style="-fx-background-color: DBDDDF;" HBox.hgrow="SOMETIMES">
+            <TilePane alignment="BASELINE_LEFT" prefColumns="1" prefHeight="551.0" prefRows="100" prefTileHeight="200.0" prefTileWidth="750.0" prefWidth="1350.0" style="-fx-background-color: DBDDDF;" HBox.hgrow="SOMETIMES">
                <children>
-                  <!-- Example cart item, to be generated dynamically in controller -->
-                  <HBox prefHeight="180.0" prefWidth="648.0" style="-fx-background-color: #f4f4f4; -fx-border-color: #bdbdbd; -fx-border-radius: 8; -fx-background-radius: 8;">
+                  <HBox prefHeight="180.0" prefWidth="648.0" style="-fx-background-color: grey;">
                      <TilePane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </TilePane.margin>
@@ -59,7 +57,6 @@
                                              <font>
                                                 <Font name="Arial" size="12.0" />
                                              </font>
-                                             <tooltip><Tooltip text="Remove this item from cart" /></tooltip>
                                           </Hyperlink>
                                        </children>
                                     </AnchorPane>
@@ -68,9 +65,7 @@
                                           <Spinner editable="true" layoutY="16.0" prefHeight="25.0" prefWidth="49.0">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <tooltip><Tooltip text="Change quantity" /></tooltip>
-                                          </Spinner>
+                                             </cursor></Spinner>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
@@ -94,10 +89,9 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </HBox>
-                  <Label fx:id="emptyCartLabel" text="Your cart is empty." style="-fx-font-size: 20px; -fx-text-fill: #b92d2d;" visible="false" />
                </children>
             </TilePane>
-            <Pane prefHeight="551.0" prefWidth="400.0" style="-fx-background-color: DBDDDF;">
+            <Pane prefHeight="551.0" prefWidth="926.0" style="-fx-background-color: DBDDDF;">
                <children>
                   <Pane layoutX="38.0" layoutY="34.0" prefHeight="483.0" prefWidth="257.0" style="-fx-background-color: #f8f8f8;">
                      <children>
@@ -106,29 +100,9 @@
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label fx:id="subtotalLabel" layoutX="72.0" layoutY="65.0" prefHeight="43.0" prefWidth="86.0" text="$0.00">
-                           <font>
-                              <Font name="Arial Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="60.0" layoutY="144.0" prefHeight="33.0" prefWidth="129.0" text="Tax:">
+                        <Label layoutX="60.0" layoutY="144.0" prefHeight="33.0" prefWidth="129.0" text="Total Cost:">
                            <font>
                               <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="taxLabel" layoutX="72.0" layoutY="169.0" prefHeight="43.0" prefWidth="86.0" text="$0.00">
-                           <font>
-                              <Font name="Arial Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="60.0" layoutY="210.0" prefHeight="33.0" prefWidth="129.0" text="Total Cost:">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="totalLabel" layoutX="72.0" layoutY="235.0" prefHeight="43.0" prefWidth="86.0" text="$0.00">
-                           <font>
-                              <Font name="Arial Bold" size="15.0" />
                            </font>
                         </Label>
                         <Button layoutX="63.0" layoutY="302.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A; -fx-background-radius: 10;" text="Order" textFill="WHITE">
@@ -139,6 +113,16 @@
                               <Font name="Arial Rounded MT Bold" size="20.0" />
                            </font>
                         </Button>
+                        <Label layoutX="72.0" layoutY="65.0" prefHeight="43.0" prefWidth="86.0" text="\$">
+                           <font>
+                              <Font name="Arial Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="72.0" layoutY="169.0" prefHeight="43.0" prefWidth="86.0" text="\$">
+                           <font>
+                              <Font name="Arial Bold" size="15.0" />
+                           </font>
+                        </Label>
                         <Hyperlink layoutX="104.0" layoutY="345.0" onMouseClicked="#switchToMainPage" text="Home" textFill="#a11212" underline="true" />
                      </children>
                   </Pane>
