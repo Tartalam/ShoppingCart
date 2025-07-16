@@ -105,7 +105,7 @@
    <top>
       <AnchorPane prefHeight="125.0" prefWidth="200.0" style="-fx-background-color: #465E75;" BorderPane.alignment="CENTER">
          <children>
-            <TextField layoutX="67.0" layoutY="43.0" maxWidth="1000.0" minWidth="200.0" onKeyPressed="#ProductSearchKey" prefHeight="40.0" prefWidth="500.0" promptText="Search" AnchorPane.leftAnchor="67.0" AnchorPane.rightAnchor="526.0">
+            <TextField fx:id="searchTextField" layoutX="67.0" layoutY="43.0" maxWidth="1000.0" minWidth="200.0" onKeyPressed="#ProductSearchKey" prefHeight="40.0" prefWidth="500.0" promptText="Search" AnchorPane.leftAnchor="67.0" AnchorPane.rightAnchor="526.0">
                <cursor>
                   <Cursor fx:constant="TEXT" />
                </cursor>
@@ -113,7 +113,7 @@
                   <Font name="Arial" size="14.0" />
                </font>
             </TextField>
-            <Button contentDisplay="GRAPHIC_ONLY" layoutX="567.0" layoutY="43.0" mnemonicParsing="false" onAction="#ProductSearch" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="476.0">
+            <Button fx:id="submitButton" contentDisplay="GRAPHIC_ONLY" layoutX="567.0" layoutY="43.0" mnemonicParsing="false" onAction="#ProductSearch" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="476.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -145,7 +145,7 @@
                <font>
                   <Font name="Bodoni MT" size="18.0" />
                </font></Label>
-            <Label alignment="CENTER" layoutX="889.0" layoutY="100.0" prefHeight="23.0" prefWidth="99.0" text="user" AnchorPane.rightAnchor="105.0">
+            <Label fx:id="userLabel" alignment="CENTER" layoutX="889.0" layoutY="100.0" prefHeight="23.0" prefWidth="99.0" text="user" AnchorPane.rightAnchor="105.0">
                <font>
                   <Font name="Arial" size="12.0" />
                </font>

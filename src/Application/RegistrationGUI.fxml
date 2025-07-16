@@ -34,7 +34,7 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <TextField layoutX="28.0" layoutY="139.0" prefHeight="40.0" prefWidth="320.0">
+                              <TextField fx:id="firstNameTextField" layoutX="28.0" layoutY="139.0" prefHeight="40.0" prefWidth="320.0">
                                  <cursor>
                                     <Cursor fx:constant="TEXT" />
                                  </cursor></TextField>
@@ -43,7 +43,7 @@
                                     <Font name="Arial" size="20.0" />
                                  </font>
                               </Label>
-                              <TextField layoutX="28.0" layoutY="232.0" prefHeight="40.0" prefWidth="320.0">
+                              <TextField fx:id="lastNameTextField" layoutX="28.0" layoutY="232.0" prefHeight="40.0" prefWidth="320.0">
                                  <cursor>
                                     <Cursor fx:constant="TEXT" />
                                  </cursor></TextField>
@@ -52,11 +52,11 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <TextField layoutX="28.0" layoutY="325.0" prefHeight="40.0" prefWidth="320.0">
+                              <TextField fx:id="emailTextField" layoutX="28.0" layoutY="325.0" prefHeight="40.0" prefWidth="320.0">
                                  <cursor>
                                     <Cursor fx:constant="TEXT" />
                                  </cursor></TextField>
-                              <Button layoutX="28.0" layoutY="396.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A;" text="Sign Up" textFill="WHITE">
+                              <Button layoutX="28.0" layoutY="396.0" mnemonicParsing="false" onMouseClicked="#UserRegistration" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A;" text="Sign Up" textFill="WHITE">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>

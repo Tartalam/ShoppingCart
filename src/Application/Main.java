@@ -27,6 +27,31 @@ public class Main extends Application {
     private static final String STACK_FILE = "stack.ser";
     private static final String QUEUE_FILE = "Queue.csv";
     
+    private static Password currentUser;
+    private static Password registrationInProgress;
+    private static long registrationStartTime;
+    
+    public static long getRegistrationStartTime() {
+		return registrationStartTime;
+	}
+
+	public static Password getRegistrationInProgress() {
+        return registrationInProgress;
+    }
+    
+    public static void setRegistrationInProgress(Password user) {
+        registrationInProgress = user;
+        registrationStartTime = System.currentTimeMillis();
+    }
+
+    public static Password getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(Password user) {
+        currentUser = user;
+    }
+    
 
     @Override
     public void start(Stage primaryStage) {

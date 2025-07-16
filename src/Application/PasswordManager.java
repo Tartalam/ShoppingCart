@@ -83,14 +83,14 @@ public class PasswordManager {
      * @return Password object if authentication succeeds, null otherwise
      */
     public Password login(String email, String password) {
-        // Step 1: Handle admin login separately
-        if (email.equals(Password.ADMIN_USERNAME)) {
-            if (Password.verifyAdmin(email, password)) {
-            	return new Password(
-            		    "Admin", "Root", "admin@system.com",
-            		    "", "", Password.LoginStatus.ADMIN, 
-            		    PasswordUtility.hashPassword(password), ""
-            		);
+    	// Admin check
+        if (email.equalsIgnoreCase(Password.ADMIN_EMAIL)) {
+            if (password.equals(Password.ADMIN_PASSWORD)) {
+                return new Password(
+                    "Admin", "System", Password.ADMIN_EMAIL,
+                    "", "", Password.LoginStatus.ADMIN,
+                    PasswordUtility.hashPassword(Password.ADMIN_PASSWORD), ""
+                );
             }
             return null;
         }

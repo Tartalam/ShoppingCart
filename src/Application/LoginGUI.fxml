@@ -35,7 +35,7 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <TextField layoutX="28.0" layoutY="139.0" prefHeight="40.0" prefWidth="320.0">
+                              <TextField fx:id="emailTextField" layoutX="28.0" layoutY="139.0" prefHeight="40.0" prefWidth="320.0">
                                  <cursor>
                                     <Cursor fx:constant="TEXT" />
                                  </cursor></TextField>
@@ -44,7 +44,7 @@
                                     <Font name="Arial" size="20.0" />
                                  </font>
                               </Label>
-                              <Button layoutX="28.0" layoutY="308.0" mnemonicParsing="false" onMouseClicked="#switchToMainPage" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A;" text="Login" textFill="WHITE">
+                              <Button fx:id="submitButton" layoutX="28.0" layoutY="308.0" mnemonicParsing="false" onMouseClicked="#UserLogin" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A;" text="Login" textFill="WHITE">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
@@ -63,12 +63,17 @@
                                  <font>
                                     <Font name="Arial Black" size="15.0" />
                                  </font></Button>
-                              <Hyperlink layoutX="28.0" layoutY="361.0" onMouseClicked="#switchToMainPage" prefHeight="23.0" prefWidth="92.0" text="Return" textFill="#1c5dc6" underline="true">
+                              <Hyperlink layoutX="28.0" layoutY="552.0" onMouseClicked="#switchToMainPage" prefHeight="23.0" prefWidth="92.0" text="Return" textFill="#1c5dc6" underline="true">
                                  <font>
                                     <Font name="Arial" size="14.0" />
                                  </font>
                               </Hyperlink>
-                              <PasswordField layoutX="28.0" layoutY="248.0" prefHeight="40.0" prefWidth="320.0" />
+                              <PasswordField fx:id="passwordTextField" layoutX="28.0" layoutY="248.0" prefHeight="40.0" prefWidth="320.0" />
+                              <Hyperlink layoutX="28.0" layoutY="359.0" onAction="#switchToForgotPasswordPage" onMouseClicked="#switchToMainPage" prefHeight="23.0" prefWidth="144.0" text="Forgot password?" textFill="#1c5dc6" underline="true">
+                                 <font>
+                                    <Font name="Arial" size="14.0" />
+                                 </font>
+                              </Hyperlink>
                            </children>
                            <padding>
                               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

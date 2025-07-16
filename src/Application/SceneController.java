@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
@@ -65,6 +66,13 @@ public class SceneController {
 	@FXML private Spinner<Integer> quantitySpinner;
 	@FXML private Label queuePositionLabel;
 	@FXML private Button deliverButton;
+	@FXML private TextField emailTextField;
+	@FXML private PasswordField passwordTextField;
+	@FXML private Label userLabel;
+	@FXML private PasswordField confirmPasswordTextField;
+	@FXML private TextField firstNameTextField;
+	@FXML private TextField lastNameTextField;
+	@FXML private TextField verificationTextField;
 
 
 	
@@ -230,7 +238,7 @@ public class SceneController {
 	
 	//Switch to the verification page.
 	public void switchToVerificationPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("VerificationGUI.fxml"));
+		root = FXMLLoader.load(getClass().getResource("VerififcationdGUI.fxml"));
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		scene = new Scene(root);
 		stage.setScene(scene);
@@ -240,6 +248,14 @@ public class SceneController {
 	
 	public void switchToForgotPasswordPage(ActionEvent event) throws IOException{
 		root = FXMLLoader.load(getClass().getResource("ForgetPasswordGUI.fxml"));
+		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(root);
+		stage.setScene(scene);
+		stage.show();
+		
+	}
+	public void switchToEmailedPasswordPage(ActionEvent event) throws IOException{
+		root = FXMLLoader.load(getClass().getResource("EmailedPasswordGUI.fxml"));
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		scene = new Scene(root);
 		stage.setScene(scene);
@@ -578,6 +594,8 @@ public class SceneController {
 	 */
 	@SuppressWarnings("unused")
 	public void populateMainPage() {
+		
+		updateUIForCurrentUser();
 		 System.out.println("[DEBUG] populateMainPage() called");
 		    
 		    if (productsFlowPane == null) {
@@ -835,6 +853,7 @@ public class SceneController {
 	 * @param product The product to display
 	 */
 	public void populateProductPage(Product product) {
+		updateUIForCurrentUser();
 	    if (product == null) {
 	        showErrorAlert("Product information not available");
 	        return;
@@ -1048,6 +1067,282 @@ public class SceneController {
 	        e.printStackTrace();
 	    }
 	}
+	
+	/**
+	 * Handles user login functionality by:
+	 * 1. Validating admin credentials against hardcoded values
+	 * 2. Searching user file for regular user credentials
+	 * 3. Setting appropriate user state (ADMIN, USER, NO_USER)
+	 * 
+	 * @param event The action event that triggered this method
+	 * @throws IOException If there's an error during scene switching
+	 */
+	public void UserLogin(MouseEvent event) throws IOException {
+		 // Get input values from text fields
+	    String email = emailTextField.getText().trim();
+	    String password = passwordTextField.getText().trim();
+	    
+	    try {
+	        // Validate input fields
+	        if (email.isEmpty() || password.isEmpty()) {
+	            showErrorAlert("Please enter both email and password");
+	            return;
+	        }
+	        
+	        // Use PasswordManager for authentication
+	        PasswordManager passwordManager = new PasswordManager();
+	        Password authenticatedUser = passwordManager.login(email, password);
+	        
+	        if (authenticatedUser == null) {
+	            showErrorAlert("Invalid email or password");
+	            return;
+	        }
+	        
+	        // Set the current user
+	        Main.setCurrentUser(authenticatedUser);
+	        
+	        // Update UI based on user type
+	        updateUIForCurrentUser();
+	        
+	        // Switch to main page after successful login
+	        switchToMainPage(event);
+	        
+	    } catch (Exception e) {
+	        showErrorAlert("Login error: " + e.getMessage());
+	        System.err.println("Login error: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+
+	/**
+	 * Updates all UI elements based on current user state (ADMIN, USER, NO_USER)
+	 */
+	public void updateUIForCurrentUser() {
+	    Password user = Main.getCurrentUser();
+	    
+	    if (user == null) {
+	        handleNoUserState();
+	        return;
+	    }
+	    
+	    switch (user.getUserType()) {
+	        case ADMIN:
+	            if (userLabel != null) {
+	                userLabel.setText("Admin");
+	                userLabel.setStyle("-fx-text-fill: #FF0000;"); // Red color for admin
+	            }
+	            enableAdminFunctionality(true);
+	            break;
+	            
+	        case USER:
+	            if (userLabel != null) {
+	                userLabel.setText(user.getFirstName());
+	                userLabel.setStyle("-fx-text-fill: #0000FF;"); // Blue color for regular user
+	            }
+	            enableUserFunctionality(true);
+	            break;
+	            
+	        case NO_USER:
+	        default:
+	            handleNoUserState();
+	            break;
+	    }
+	}
+
+	/**
+	 * Handles UI updates for no user state (logged out)
+	 */
+	private void handleNoUserState() {
+	    if (userLabel != null) {
+	        userLabel.setText("Guest");
+	        userLabel.setStyle("-fx-text-fill: #000000;"); // Black color for no user
+	    }
+	    enableUserFunctionality(false);
+	    enableAdminFunctionality(false);
+	}
+
+	/**
+	 * Enables or disables user functionality based on login state
+	 * @param enabled true to enable user features, false to disable
+	 */
+	private void enableUserFunctionality(boolean enabled) {
+	    // Enable/disable cart-related functionality
+	    if (cartButton != null) {
+	        cartButton.setDisable(!enabled);
+	    }
+	    if (orderButton != null) {
+	        orderButton.setDisable(!enabled);
+	    }
+	    
+	    // Add other user-specific UI controls here
+	}
+
+	/**
+	 * Enables or disables admin functionality based on login state
+	 * @param enabled true to enable admin features, false to disable
+	 */
+	private void enableAdminFunctionality(boolean enabled) {
+	    // Enable/disable admin-specific buttons
+	    if (addProduct != null) {
+	        addProduct.setDisable(!enabled);
+	    }
+	    
+	    // Add other admin-specific UI controls here
+	}
+
+	/**
+	 * Handles user logout functionality
+	 * @param event The mouse event that triggered logout
+	 * @throws IOException If there's an error during scene switching
+	 */
+	public void handleLogout(MouseEvent event) throws IOException {
+	    // Clear current user
+	    Main.setCurrentUser(null);
+	    
+	    // Update UI to no user state
+	    updateUIForCurrentUser();
+	    
+	    // Clear any sensitive fields
+	    if (emailTextField != null) emailTextField.clear();
+	    if (passwordTextField != null) passwordTextField.clear();
+	    
+	    // Show logout confirmation
+	    showSuccessAlert("You have been logged out successfully");
+	    
+	    // Switch to login page
+	    switchToLoginPage(event);
+	}
+	
+	private Password tempUser; // Temporary storage for user data during registration
+	
+	public void UserRegistration(MouseEvent event) throws IOException{
+		// Get input values
+		String firstName = firstNameTextField.getText().trim();
+	    String lastName = lastNameTextField.getText().trim();
+	    String email = emailTextField.getText().trim();
+
+	    // Validation
+	    if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
+	        showErrorAlert("All fields are required");
+	        return;
+	    }
+
+	    if (!email.contains("@") || !email.contains(".")) {
+	        showErrorAlert("Please enter a valid email address");
+	        return;
+	    }
+
+	    // Check if user exists
+	    if (UserFileManager.loadUser(email) != null) {
+	        showErrorAlert("User with this email already exists");
+	        return;
+	    }
+
+	    // Create temporary user
+	    Password tempUser = new Password(
+	        firstName, lastName, email, 
+	        "", "", Password.LoginStatus.USER, "", ""
+	    );
+	    
+	    // Store in Main instead of saving to file
+	    Main.setRegistrationInProgress(tempUser);
+
+	    // Generate and send OTP
+	    String otp = PasswordUtility.generateOTP();
+	    PasswordManager passwordManager = new PasswordManager();
+	    
+	    if (Email.sendOTP(email, otp)) {
+	        UserFileManager.saveOTP(email, otp);
+	        switchToVerificationPage(event);
+	    } else {
+	        showErrorAlert("Failed to send verification code. Please try again.");
+	    }
+		
+	}
+	
+	public void userVerification(MouseEvent event) throws IOException{
+		Password tempUser = Main.getRegistrationInProgress();
+	    
+	    // Check session timeout (10 minutes)
+	    if (System.currentTimeMillis() - Main.getRegistrationStartTime() > 600000) {
+	        showErrorAlert("Session expired. Please start again.");
+	        Main.setRegistrationInProgress(null);
+	        switchToRegistrationPage(event);
+	        return;
+	    }
+
+	    if (tempUser == null) {
+	        showErrorAlert("Registration session expired. Please start again.");
+	        switchToRegistrationPage(event);
+	        return;
+	    }
+
+	    String enteredOTP = verificationTextField.getText().trim();
+	    if (enteredOTP.isEmpty()) {
+	        showErrorAlert("Please enter the verification code");
+	        return;
+	    }
+
+	    // Verify OTP
+	    if (UserFileManager.verifyOTP(tempUser.getEmail(), enteredOTP)) {
+	        switchToPasswordPage(event);
+	    } else {
+	        showErrorAlert("Invalid verification code. Please try again.");
+	    }
+		
+	}
+	
+	public void CreatePassword(MouseEvent event) throws IOException {
+	    Password tempUser = Main.getRegistrationInProgress();
+	    
+	    // Check session timeout
+	    if (System.currentTimeMillis() - Main.getRegistrationStartTime() > 600000) {
+	        showErrorAlert("Session expired. Please start again.");
+	        Main.setRegistrationInProgress(null);
+	        switchToRegistrationPage(event);
+	        return;
+	    }
+
+	    if (tempUser == null) {
+	        showErrorAlert("Registration session expired. Please start again.");
+	        switchToRegistrationPage(event);
+	        return;
+	    }
+
+	    String password = passwordTextField.getText();
+	    String confirmPassword = confirmPasswordTextField.getText();
+
+	    // Validate password
+	    if (password.isEmpty() || confirmPassword.isEmpty()) {
+	        showErrorAlert("Both password fields are required");
+	        return;
+	    }
+
+	    if (!password.equals(confirmPassword)) {
+	        showErrorAlert("Passwords do not match");
+	        return;
+	    }
+
+	    if (!PasswordUtility.validatePasswordComplexity(password)) {
+	        showErrorAlert("Password must be at least 8 characters with uppercase, lowercase, number, and special character");
+	        return;
+	    }
+
+	    // Set password and save user
+	    tempUser.setHashedPassword(PasswordUtility.hashPassword(password));
+	    
+	    // Use update instead of save to prevent duplicates
+	    UserFileManager.updateUser(tempUser);
+
+	    // Clear temporary data
+	    Main.setRegistrationInProgress(null);
+
+	    // Show success and go to login page
+	    showSuccessAlert("Registration successful! Please login with your new account.");
+	    switchToLoginPage(event);
+	}
+	
+	
 	
 	/**
 	 * Configures the quantity spinner with proper limits

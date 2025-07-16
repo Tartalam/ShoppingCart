@@ -91,30 +91,32 @@ class UserFileManager {
     }
 
     public static void updateUser(Password user) {
-        List<String> lines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length >= 3 && parts[2].equals(user.getEmail())) {
-                    line = user.getFirstName() + "," + user.getLastName() + "," +
-                          user.getEmail() + "," + user.getUserType() + "," +
-                          user.getHashedPassword();
-                }
-                lines.add(line);
-            }
-        } catch (IOException e) {
-            System.out.println("Error reading user file: " + e.getMessage());
-            return;
-        }
+    	 List<String> lines = new ArrayList<>();
+    	    try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE))) {
+    	        String line;
+    	        while ((line = reader.readLine()) != null) {
+    	            String[] parts = line.split(",");
+    	            if (parts.length >= 3 && parts[2].equals(user.getEmail())) {
+    	                // Preserve password history if exists
+    	                String history = parts.length > 5 ? parts[5] : "";
+    	                line = user.getFirstName() + "," + user.getLastName() + "," +
+    	                      user.getEmail() + "," + user.getUserType() + "," +
+    	                      user.getHashedPassword() + "," + history;
+    	            }
+    	            lines.add(line);
+    	        }
+    	    } catch (IOException e) {
+    	        System.out.println("Error reading user file: " + e.getMessage());
+    	        return;
+    	    }
 
-        try (PrintWriter writer = new PrintWriter(new FileWriter(USER_FILE))) {
-            for (String line : lines) {
-                writer.println(line);
-            }
-        } catch (IOException e) {
-            System.out.println("Error updating user file: " + e.getMessage());
-        }
+    	    try (PrintWriter writer = new PrintWriter(new FileWriter(USER_FILE))) {
+    	        for (String line : lines) {
+    	            writer.println(line);
+    	        }
+    	    } catch (IOException e) {
+    	        System.out.println("Error updating user file: " + e.getMessage());
+    	    }
     }
 
     public static void saveOTP(String email, String otp) {
@@ -126,7 +128,7 @@ class UserFileManager {
     }
 
     public static boolean verifyOTP(String email, String enteredOTP) {
-        List<String> lines = new ArrayList<>();
+    	List<String> lines = new ArrayList<>();
         boolean verified = false;
         long currentTime = System.currentTimeMillis();
 
@@ -136,19 +138,24 @@ class UserFileManager {
                 String[] parts = line.split(",");
                 if (parts.length == 3) {
                     long otpTime = Long.parseLong(parts[2]);
+                    
+                    // Keep non-expired OTPs
                     if (currentTime - otpTime < 600000) {
+                        // Check for match
                         if (parts[0].equals(email) && parts[1].equals(enteredOTP)) {
                             verified = true;
                         } else {
-                            lines.add(line);
+                            lines.add(line); // Keep valid non-matching OTPs
                         }
                     }
+                    // Expired OTPs are discarded
                 }
             }
         } catch (IOException e) {
             System.out.println("Error verifying OTP: " + e.getMessage());
         }
         
+        // Save remaining OTPs
         try (PrintWriter writer = new PrintWriter(new FileWriter(OTP_FILE))) {
             for (String line : lines) {
                 writer.println(line);
