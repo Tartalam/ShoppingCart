@@ -10,12 +10,18 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
+import Application.PasswordManager;
 
 public class SceneController {
 	@FXML
 	private Stage stage;
 	private Scene scene;
 	private Parent root;
+	@FXML private TextField firstNameField;
+	@FXML private TextField lastNameField;
+	@FXML private TextField emailField;
 	
 	// Switch to the main product page.
 	public void switchToMainPage(MouseEvent event) throws IOException{
@@ -155,6 +161,20 @@ public class SceneController {
 		stage.show();
 		
 	}
+	
+	@FXML
+    private void handleRegistration(ActionEvent event) {
+        String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText();
+        String email = emailField.getText();
+        PasswordManager pm = new PasswordManager();
+        boolean success = pm.registerCustomer(firstName, lastName, email);
+        Alert alert = new Alert(success ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR);
+        alert.setTitle(success ? "Registration Successful" : "Registration Failed");
+        alert.setHeaderText(null);
+        alert.setContentText(success ? "Registration successful! Please check your email for the OTP." : "Registration failed. Please check your details or try a different email.");
+        alert.showAndWait();
+    }
 	
 
 }
