@@ -1213,10 +1213,8 @@ public class SceneController {
 	    switchToLoginPage(event);
 	}
 	
-//	private Password tempUser; // Temporary storage for user data during registration
-//	private String tempEmail;
 	
-	public void UserRegistration(MouseEvent event) throws IOException{
+	public void userRegistration(MouseEvent event) throws IOException{
 		// Get input values
 		String firstName = firstNameTextField.getText().trim();
 	    String lastName = lastNameTextField.getText().trim();
@@ -1248,26 +1246,6 @@ public class SceneController {
 		  showErrorAlert("Failed to send verification code. please try again.");
 	  }
 
-//	    // Create temporary user
-//	    Password tempUser = new Password(
-//	        firstName, lastName, email, 
-//	        "", "", Password.LoginStatus.USER, "", ""
-//	    );
-//	    
-//	    // Store in Main instead of saving to file
-//	    Main.setRegistrationInProgress(tempUser);
-//
-//	    // Generate and send OTP
-//	    String otp = PasswordUtility.generateOTP();
-//	    //PasswordManager passwordManager = new PasswordManager();
-//	    
-//	    if (Email.sendOTP(email, otp)) {
-//	        UserFileManager.saveOTP(email, otp);
-//	        switchToVerificationPage(event);
-//	    } else {
-//	        showErrorAlert("Failed to send verification code. Please try again.");
-//	    }
-//		
 	}
 	
 	public void userVerification(MouseEvent event) throws IOException{
@@ -1302,7 +1280,7 @@ public class SceneController {
 		
 	}
 	
-	public void SetPassword(MouseEvent event) throws IOException {
+	public void setPassword(MouseEvent event) throws IOException {
 	    Password tempUser = Main.getRegistrationInProgress();
 	    
 	    // Check session timeout
@@ -1354,6 +1332,24 @@ public class SceneController {
 	    // Show success and go to login page
 	    showSuccessAlert("Registration successful! Please login with your new account.");
 	    switchToLoginPage(event);
+	}
+	
+	public void forgotPassword(MouseEvent event) throws IOException {
+		
+		//get first and last name from text fields
+		String firstName = firstNameTextField.getText().trim();	
+		String lastName = lastNameTextField.getText().trim();	
+		
+		PasswordManager forgotPassword = new PasswordManager();
+		
+		if(forgotPassword.forgotPassword(firstName, lastName)) {
+			showSuccessAlert("Password reset Successfull use the new password to log in");
+		}else {
+			showErrorAlert("Unable to reset password");
+		}
+		
+		switchToLoginPage(event);
+		
 	}
 	
 	

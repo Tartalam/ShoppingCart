@@ -47,33 +47,7 @@ public class PasswordManager {
         return false;
     }
 
-    /**
-     * Verifies OTP and sets the user's password if validation passes.
-     * 
-     * @param email User's email for identification
-     * @param enteredOTP OTP entered by the user
-     * @param password New password to set
-     * @param confirmPassword Confirmation of new password
-     * @return Password object if successful, null if OTP or password is invalid
-     */
-//    public Password verifyOTPAndSetPassword(String email, String enteredOTP, String password, String confirmPassword) {
-//        // Step 1: Verify OTP matches what was sent to the user
-//        if (!UserFileManager.verifyOTP(email, enteredOTP)) {
-//            return null;
-//        }
-//
-//        // Step 2: Load user from storage
-//        Password user = UserFileManager.loadUser(email);
-//        
-//        // Step 3: Check password and confirmation match
-//        if (user != null && password.equals(confirmPassword)) {
-//            // Step 4: Hash password and update user record
-//            user.setHashedPassword(PasswordUtility.hashPassword(password));
-//            UserFileManager.saveUser(user);
-//            return user;
-//        }
-//        return null;
-//    }
+   
     
     public Password SetPassword(String email, String password, String confirmPassword) {
     	
@@ -176,7 +150,7 @@ public class PasswordManager {
             if (Email.sendNewPassword(user.getEmail(), newPassword)) {
                 // Step 4: Update password in system
                 user.setHashedPassword(PasswordUtility.hashPassword(newPassword));
-                UserFileManager.saveUser(user);
+                UserFileManager.updateUser(user);
                 return true;
             }
         }
