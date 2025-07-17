@@ -28,7 +28,7 @@ Select the root directory of your cloned repository.
 
 Click Finish to import the project.
 
-##3. Configure VM Arguments for JavaFX
+## 3. Configure VM Arguments for JavaFX
 Since the dependencies (including JavaFX) are managed in pom.xml, you only need to add the required modules via VM arguments.
 
 For Windows:
