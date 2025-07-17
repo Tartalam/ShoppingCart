@@ -47,7 +47,7 @@ Click Apply and then Run.
 For Linux:
 The process is the same as Windows, but ensure JavaFX is properly installed (if not using Maven dependencies).
 
-##4. Run the Project
+## 4. Run the Project
 Right-click the project → Run As → Java Application (or use Maven commands).
 
 Alternatively, via command line (with Maven):
@@ -57,7 +57,7 @@ mvn clean javafx:run
 
 
 
-##Troubleshooting
+## Troubleshooting
 If JavaFX is not detected, ensure:
 
 You have the correct JDK version.
