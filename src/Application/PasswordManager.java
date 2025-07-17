@@ -41,7 +41,7 @@ public class PasswordManager {
             	    firstName, lastName, email, 
             	    "", "", Password.LoginStatus.USER, "", ""
             	);
-            UserFileManager.saveUser(user);
+            Main.setRegistrationInProgress(user);
             return true;
         }
         return false;
@@ -56,16 +56,31 @@ public class PasswordManager {
      * @param confirmPassword Confirmation of new password
      * @return Password object if successful, null if OTP or password is invalid
      */
-    public Password verifyOTPAndSetPassword(String email, String enteredOTP, String password, String confirmPassword) {
-        // Step 1: Verify OTP matches what was sent to the user
-        if (!UserFileManager.verifyOTP(email, enteredOTP)) {
-            return null;
-        }
-
-        // Step 2: Load user from storage
+//    public Password verifyOTPAndSetPassword(String email, String enteredOTP, String password, String confirmPassword) {
+//        // Step 1: Verify OTP matches what was sent to the user
+//        if (!UserFileManager.verifyOTP(email, enteredOTP)) {
+//            return null;
+//        }
+//
+//        // Step 2: Load user from storage
+//        Password user = UserFileManager.loadUser(email);
+//        
+//        // Step 3: Check password and confirmation match
+//        if (user != null && password.equals(confirmPassword)) {
+//            // Step 4: Hash password and update user record
+//            user.setHashedPassword(PasswordUtility.hashPassword(password));
+//            UserFileManager.saveUser(user);
+//            return user;
+//        }
+//        return null;
+//    }
+    
+    public Password SetPassword(String email, String password, String confirmPassword) {
+    	
+    	// Step 1: Load user from storage
         Password user = UserFileManager.loadUser(email);
         
-        // Step 3: Check password and confirmation match
+        // Step 2: Check password and confirmation match
         if (user != null && password.equals(confirmPassword)) {
             // Step 4: Hash password and update user record
             user.setHashedPassword(PasswordUtility.hashPassword(password));
@@ -73,6 +88,8 @@ public class PasswordManager {
             return user;
         }
         return null;
+    	
+    	
     }
 
     /**

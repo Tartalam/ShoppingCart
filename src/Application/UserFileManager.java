@@ -13,38 +13,59 @@ public class UserFileManager {
     private static final String USER_FILE = "users.txt";
     private static final String OTP_FILE = "otps.txt";
 
-    public static void saveUser(Password user) {
+    public static boolean saveUser(Password user) {
         if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
+            return false;
         }
 
-        // Create backup of existing file
         File userFile = new File(USER_FILE);
+        
+        // Check for duplicate email if file exists
+        if (userFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length >= 3 && parts[2].equals(user.getEmail())) {
+                        System.err.println("Duplicate email found: " + user.getEmail());
+                        return false;
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error checking for duplicates: " + e.getMessage());
+                // Continue with save despite read error
+            }
+        }
+
+        // Create backup
         File backupFile = new File(USER_FILE + ".bak");
+        boolean backupCreated = false;
         if (userFile.exists()) {
             try {
                 Files.copy(userFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                backupCreated = true;
             } catch (IOException e) {
-                System.err.println("Failed to create backup: " + e.getMessage());
+                System.err.println("Backup failed: " + e.getMessage());
             }
         }
 
-        // Save user data
+        // Attempt save
         try (PrintWriter writer = new PrintWriter(new FileWriter(USER_FILE, true))) {
             writer.println(user.toString());
+            return true;
         } catch (IOException e) {
-            // Restore from backup if save failed
-            if (backupFile.exists()) {
+            System.err.println("Save failed: " + e.getMessage());
+            
+            // Restore backup if exists
+            if (backupCreated) {
                 try {
                     Files.copy(backupFile.toPath(), userFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException ex) {
-                    System.err.println("Failed to restore from backup: " + ex.getMessage());
+                    System.err.println("Restore failed: " + ex.getMessage());
                 }
             }
-            System.err.println("Error saving user: " + e.getMessage());
-            throw new RuntimeException("User save failed", e);
+            return false;
         } finally {
-            // Clean up backup
             if (backupFile.exists()) {
                 backupFile.delete();
             }

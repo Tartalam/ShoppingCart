@@ -1,10 +1,8 @@
 package Application;
 
-import java.util.Date;
 import java.util.Properties;
 
 import jakarta.mail.*;
-import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
@@ -12,11 +10,10 @@ import jakarta.mail.internet.MimeMessage;
  * Handles sending emails for OTP and password reset functionality.
  * Uses Gmail's SMTP server for sending emails.
  */
-class Email {
+public class Email {
     private static final String SMTP_HOST = "smtp.gmail.com";
-    private static final String EMAIL = "jahmariharrison2@gmail.com";
-    private static final String PASSWORD = "zhng hpnn byqg gyqs";
-    private static final int SMTP_PORT = 587;
+    private static final String FROM_EMAIL = "jahmariharrison2@gmail.com";
+    private static final String APP_PASSWORD = "jidv fdcb sbhk xxic";
 
     /**
      * Sends OTP code to user's email.
@@ -68,51 +65,33 @@ class Email {
     private static boolean sendEmail(String toEmail, String subject, String body) {
         try {
             Properties props = new Properties();
-            props.put("mial.smtp.starttls.required", "true");
-            props.put("mail.smtp.ssl.ciphersuites", "TLS_AES_128_GCM_SHA256");
+            props.put("mail.smtp.host", SMTP_HOST);
+            props.put("mail.smtp.port", "587");
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-            
-            // Debugging properties (remove in production)
-            props.put("mail.debug", "true");
-            props.put("mail.smtp.debug", "true");
-            
-            
-            Session session = Session.getInstance(props, new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(EMAIL, PASSWORD);
-                }
-            });
 
+            	Authenticator authenticator = new Authenticator() { 
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(FROM_EMAIL, APP_PASSWORD);
+                }
+            	};
+            Session session = Session.getInstance(props, authenticator);
+            try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(EMAIL));
+            message.setFrom(new InternetAddress(FROM_EMAIL));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject(subject);
             message.setText(body);
-            message.setSentDate(new Date());
-
-            Transport transport = session.getTransport("smtp");
-            transport.connect(SMTP_HOST, SMTP_PORT, EMAIL, PASSWORD);
-            transport.sendMessage(message, message.getAllRecipients());
-            transport.close();
             
+
+            Transport.send(message); // Simplified transport handling
             return true;
-        } catch (AddressException e) {
-        	e.printStackTrace();
-            System.err.println("Invalid email address: " + e.getMessage());
-            return false;
-        } catch (MessagingException e) {
-        	e.printStackTrace();
-            System.err.println("Email sending failed: " + e.getMessage());
-            return false;
+            }catch(MessagingException e) {
+            	throw new RuntimeException(e);
+            }
         } catch (Exception e) {
-            System.err.println("Unexpected error sending email: " + e.getMessage());
             e.printStackTrace();
-            System.err.println("Email sending error: " + e.getMessage());
             return false;
         }
-        
     }
 }

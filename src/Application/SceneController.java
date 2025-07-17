@@ -238,7 +238,7 @@ public class SceneController {
 	
 	//Switch to the verification page.
 	public void switchToVerificationPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("VerififcationdGUI.fxml"));
+		root = FXMLLoader.load(getClass().getResource("VerificationGUI.fxml"));
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		scene = new Scene(root);
 		stage.setScene(scene);
@@ -1213,7 +1213,8 @@ public class SceneController {
 	    switchToLoginPage(event);
 	}
 	
-	private Password tempUser; // Temporary storage for user data during registration
+//	private Password tempUser; // Temporary storage for user data during registration
+//	private String tempEmail;
 	
 	public void UserRegistration(MouseEvent event) throws IOException{
 		// Get input values
@@ -1237,27 +1238,36 @@ public class SceneController {
 	        showErrorAlert("User with this email already exists");
 	        return;
 	    }
-
-	    // Create temporary user
-	    Password tempUser = new Password(
-	        firstName, lastName, email, 
-	        "", "", Password.LoginStatus.USER, "", ""
-	    );
 	    
-	    // Store in Main instead of saving to file
-	    Main.setRegistrationInProgress(tempUser);
-
-	    // Generate and send OTP
-	    String otp = PasswordUtility.generateOTP();
-	    PasswordManager passwordManager = new PasswordManager();
-	    
-	    if (Email.sendOTP(email, otp)) {
-	        UserFileManager.saveOTP(email, otp);
-	        switchToVerificationPage(event);
-	    } else {
-	        showErrorAlert("Failed to send verification code. Please try again.");
-	    }
+	  PasswordManager passwordManager = new PasswordManager();
+	  
+	  if(passwordManager.registerCustomer(firstName, lastName, email)) {
+		  switchToVerificationPage(event);
 		
+	  }else {
+		  showErrorAlert("Failed to send verification code. please try again.");
+	  }
+
+//	    // Create temporary user
+//	    Password tempUser = new Password(
+//	        firstName, lastName, email, 
+//	        "", "", Password.LoginStatus.USER, "", ""
+//	    );
+//	    
+//	    // Store in Main instead of saving to file
+//	    Main.setRegistrationInProgress(tempUser);
+//
+//	    // Generate and send OTP
+//	    String otp = PasswordUtility.generateOTP();
+//	    //PasswordManager passwordManager = new PasswordManager();
+//	    
+//	    if (Email.sendOTP(email, otp)) {
+//	        UserFileManager.saveOTP(email, otp);
+//	        switchToVerificationPage(event);
+//	    } else {
+//	        showErrorAlert("Failed to send verification code. Please try again.");
+//	    }
+//		
 	}
 	
 	public void userVerification(MouseEvent event) throws IOException{
@@ -1292,7 +1302,7 @@ public class SceneController {
 		
 	}
 	
-	public void CreatePassword(MouseEvent event) throws IOException {
+	public void SetPassword(MouseEvent event) throws IOException {
 	    Password tempUser = Main.getRegistrationInProgress();
 	    
 	    // Check session timeout
@@ -1332,7 +1342,11 @@ public class SceneController {
 	    tempUser.setHashedPassword(PasswordUtility.hashPassword(password));
 	    
 	    // Use update instead of save to prevent duplicates
-	    UserFileManager.updateUser(tempUser);
+	    if(UserFileManager.saveUser(tempUser)) {
+	    	showSuccessAlert("Registration Complete! user saved to the system.");
+	    }else {
+	    	showErrorAlert("Registration Failed!! due some error user file was to save tot he system.");
+	    }
 
 	    // Clear temporary data
 	    Main.setRegistrationInProgress(null);
