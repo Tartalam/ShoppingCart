@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -15,32 +16,32 @@
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <TilePane fx:id="cartTilePane" alignment="BASELINE_LEFT" prefColumns="1" prefHeight="551.0" prefRows="200" prefTileHeight="200.0" prefTileWidth="750.0" prefWidth="1350.0" style="-fx-background-color: DBDDDF;" HBox.hgrow="SOMETIMES" />
-            <Pane prefHeight="551.0" prefWidth="926.0" style="-fx-background-color: DBDDDF;">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" HBox.hgrow="ALWAYS">
+               <content>
+                  <TilePane fx:id="cartTilePane" alignment="BASELINE_LEFT" prefColumns="1" prefTileHeight="200.0" prefTileWidth="750.0" style="-fx-background-color: DBDDDF;" />
+               </content>
+            </ScrollPane>
+            <Pane prefHeight="483.0" prefWidth="257.0" style="-fx-background-color: #f8f8f8;">
                <children>
-                  <Pane layoutX="38.0" layoutY="34.0" prefHeight="483.0" prefWidth="257.0" style="-fx-background-color: #f8f8f8;">
-                     <children>
-                        <Label alignment="CENTER" layoutX="43.0" layoutY="57.0" prefHeight="33.0" prefWidth="172.0" text="Total Cost:">
-                           <font>
-                              <Font name="Arial Bold" size="30.0" />
-                           </font>
-                        </Label>
-                        <Button fx:id="orderButton" layoutX="63.0" layoutY="302.0" mnemonicParsing="false" onAction="#OrderProducts" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A; -fx-background-radius: 10;" text="Order" textFill="WHITE">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                           <font>
-                              <Font name="Arial Rounded MT Bold" size="20.0" />
-                           </font>
-                        </Button>
-                        <Label fx:id="grandTotalLabel" alignment="CENTER" layoutX="50.0" layoutY="155.0" prefHeight="43.0" prefWidth="157.0" text="\$">
-                           <font>
-                              <Font name="Arial Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Hyperlink layoutX="104.0" layoutY="345.0" onMouseClicked="#switchToMainPage" text="Home" textFill="#a11212" underline="true" />
-                     </children>
-                  </Pane>
+                  <Label alignment="CENTER" layoutX="43.0" layoutY="57.0" prefHeight="33.0" prefWidth="172.0" text="Total Cost:">
+                     <font>
+                        <Font name="Arial Bold" size="30.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="orderButton" layoutX="63.0" layoutY="302.0" mnemonicParsing="false" onAction="#OrderProducts" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: #6F7A8A; -fx-background-radius: 10;" text="Order" textFill="WHITE">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <font>
+                        <Font name="Arial Rounded MT Bold" size="20.0" />
+                     </font>
+                  </Button>
+                  <Label fx:id="grandTotalLabel" alignment="CENTER" layoutX="50.0" layoutY="155.0" prefHeight="43.0" prefWidth="157.0" text="\$">
+                     <font>
+                        <Font name="Arial Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <Hyperlink layoutX="104.0" layoutY="345.0" onMouseClicked="#switchToMainPage" text="Home" textFill="#a11212" underline="true" />
                </children>
             </Pane>
          </children>

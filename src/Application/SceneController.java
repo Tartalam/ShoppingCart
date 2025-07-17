@@ -24,6 +24,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -78,7 +79,7 @@ public class SceneController {
 	@FXML private ImageView productManagerImage;
 	@FXML private Label productManagerLabel;
 	@FXML private Hyperlink logoutHyperLink;
-
+	
 
 	
 	// Switch to the main product page.
@@ -1432,6 +1433,9 @@ public class SceneController {
 		
 		
 	}
+	
+	// This method should be called after the FXML is loaded
+
 	
 	public void adminResetUserPassword(MouseEvent event)throws IOException{
 		String email = emailTextField.getText().trim();
