@@ -8,7 +8,8 @@ import java.util.*;
 
 import Application.Password.LoginStatus;
 
-class UserFileManager {
+
+public class UserFileManager {
     private static final String USER_FILE = "users.txt";
     private static final String OTP_FILE = "otps.txt";
 

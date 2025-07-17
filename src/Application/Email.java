@@ -1,8 +1,12 @@
 package Application;
 
+import java.util.Date;
 import java.util.Properties;
-import javax.mail.*;
-import javax.mail.internet.*;
+
+import jakarta.mail.*;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * Handles sending emails for OTP and password reset functionality.
@@ -10,8 +14,9 @@ import javax.mail.internet.*;
  */
 class Email {
     private static final String SMTP_HOST = "smtp.gmail.com";
-    private static final String EMAIL = "kerrandre1426@gmail.com";
-    private static final String PASSWORD = "aeazdbjjuyhrtvkf";
+    private static final String EMAIL = "jahmariharrison2@gmail.com";
+    private static final String PASSWORD = "zhng hpnn byqg gyqs";
+    private static final int SMTP_PORT = 587;
 
     /**
      * Sends OTP code to user's email.
@@ -63,12 +68,17 @@ class Email {
     private static boolean sendEmail(String toEmail, String subject, String body) {
         try {
             Properties props = new Properties();
-            props.put("mail.smtp.host", SMTP_HOST);
-            props.put("mail.smtp.port", "587");
+            props.put("mial.smtp.starttls.required", "true");
+            props.put("mail.smtp.ssl.ciphersuites", "TLS_AES_128_GCM_SHA256");
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.enable", "true");
             props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-
+            
+            // Debugging properties (remove in production)
+            props.put("mail.debug", "true");
+            props.put("mail.smtp.debug", "true");
+            
+            
             Session session = Session.getInstance(props, new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -81,16 +91,28 @@ class Email {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject(subject);
             message.setText(body);
+            message.setSentDate(new Date());
 
-            Transport.send(message);
+            Transport transport = session.getTransport("smtp");
+            transport.connect(SMTP_HOST, SMTP_PORT, EMAIL, PASSWORD);
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
+            
             return true;
         } catch (AddressException e) {
+        	e.printStackTrace();
             System.err.println("Invalid email address: " + e.getMessage());
+            return false;
         } catch (MessagingException e) {
+        	e.printStackTrace();
             System.err.println("Email sending failed: " + e.getMessage());
+            return false;
         } catch (Exception e) {
             System.err.println("Unexpected error sending email: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("Email sending error: " + e.getMessage());
+            return false;
         }
-        return false;
+        
     }
 }
