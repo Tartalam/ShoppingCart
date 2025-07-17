@@ -62,7 +62,7 @@
          <children>
             <Pane layoutX="99.0" layoutY="71.0" prefHeight="279.0" prefWidth="552.0" style="-fx-background-color: grey;" AnchorPane.leftAnchor="99.0">
                <children>
-                  <Button defaultButton="true" layoutX="126.0" layoutY="184.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: #6F7A8A;" text="Delete Product" textFill="WHITE">
+                  <Button defaultButton="true" layoutX="126.0" layoutY="184.0" mnemonicParsing="false" onAction="#deleteExistingProducts" prefHeight="60.0" prefWidth="300.0" style="-fx-background-color: #6F7A8A;" text="Delete Product" textFill="WHITE">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -74,13 +74,18 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <TextField layoutX="46.0" layoutY="83.0" prefHeight="40.0" prefWidth="432.0">
+                  <TextField fx:id="idTextField" layoutX="46.0" layoutY="83.0" prefHeight="40.0" prefWidth="432.0">
                      <cursor>
                         <Cursor fx:constant="TEXT" />
                      </cursor></TextField>
-                  <Label layoutX="46.0" layoutY="139.0" prefHeight="17.0" prefWidth="201.0" text="Please enter a Number" textFill="#d31717">
+                  <Label fx:id="idLabel" layoutX="46.0" layoutY="123.0" prefHeight="17.0" prefWidth="433.0" textFill="#d31717">
                      <font>
                         <Font name="Arial" size="13.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="warningLabel" alignment="CENTER" layoutX="-1.0" layoutY="1.0" prefHeight="47.0" prefWidth="554.0" textFill="#d31717">
+                     <font>
+                        <Font name="Arial" size="24.0" />
                      </font>
                   </Label>
                </children>

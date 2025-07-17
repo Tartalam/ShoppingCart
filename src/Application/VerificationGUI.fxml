@@ -35,11 +35,11 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <TextField layoutX="38.0" layoutY="129.0" prefHeight="52.0" prefWidth="759.0">
+                              <TextField fx:id="verificationTextField" layoutX="38.0" layoutY="129.0" prefHeight="52.0" prefWidth="759.0">
                                  <cursor>
                                     <Cursor fx:constant="TEXT" />
                                  </cursor></TextField>
-                              <Button layoutX="38.0" layoutY="189.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="198.0" style="-fx-background-color: #6F7A8A;" text="Change Password" textFill="WHITE">
+                              <Button layoutX="38.0" layoutY="189.0" mnemonicParsing="false" onMouseClicked="#userVerification" prefHeight="40.0" prefWidth="198.0" style="-fx-background-color: #6F7A8A;" text="Verify" textFill="WHITE">
                                  <font>
                                     <Font name="Arial Rounded MT Bold" size="18.0" />
                                  </font></Button>

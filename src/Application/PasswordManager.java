@@ -31,7 +31,7 @@ public class PasswordManager {
         }
 
         // Step 3: Generate OTP and send via email
-        String otp = PasswordUtils.generateOTP();
+        String otp = PasswordUtility.generateOTP();
         if (Email.sendOTP(email, otp)) {
             // Step 4: Save OTP to file for verification later
             UserFileManager.saveOTP(email, otp);
@@ -41,38 +41,29 @@ public class PasswordManager {
             	    firstName, lastName, email, 
             	    "", "", Password.LoginStatus.USER, "", ""
             	);
-            UserFileManager.saveUser(user);
+            Main.setRegistrationInProgress(user);
             return true;
         }
         return false;
     }
 
-    /**
-     * Verifies OTP and sets the user's password if validation passes.
-     * 
-     * @param email User's email for identification
-     * @param enteredOTP OTP entered by the user
-     * @param password New password to set
-     * @param confirmPassword Confirmation of new password
-     * @return Password object if successful, null if OTP or password is invalid
-     */
-    public Password verifyOTPAndSetPassword(String email, String enteredOTP, String password, String confirmPassword) {
-        // Step 1: Verify OTP matches what was sent to the user
-        if (!UserFileManager.verifyOTP(email, enteredOTP)) {
-            return null;
-        }
-
-        // Step 2: Load user from storage
+   
+    
+    public Password SetPassword(String email, String password, String confirmPassword) {
+    	
+    	// Step 1: Load user from storage
         Password user = UserFileManager.loadUser(email);
         
-        // Step 3: Check password and confirmation match
+        // Step 2: Check password and confirmation match
         if (user != null && password.equals(confirmPassword)) {
             // Step 4: Hash password and update user record
-            user.setHashedPassword(PasswordUtils.hashPassword(password));
+            user.setHashedPassword(PasswordUtility.hashPassword(password));
             UserFileManager.saveUser(user);
             return user;
         }
         return null;
+    	
+    	
     }
 
     /**
@@ -83,14 +74,14 @@ public class PasswordManager {
      * @return Password object if authentication succeeds, null otherwise
      */
     public Password login(String email, String password) {
-        // Step 1: Handle admin login separately
-        if (email.equals(Password.ADMIN_USERNAME)) {
-            if (Password.verifyAdmin(email, password)) {
-            	return new Password(
-            		    "Admin", "Root", "admin@system.com",
-            		    "", "", Password.LoginStatus.ADMIN, 
-            		    PasswordUtils.hashPassword(password), ""
-            		);
+    	// Admin check
+        if (email.equalsIgnoreCase(Password.ADMIN_EMAIL)) {
+            if (password.equals(Password.ADMIN_PASSWORD)) {
+                return new Password(
+                    "Admin", "System", Password.ADMIN_EMAIL,
+                    "", "", Password.LoginStatus.ADMIN,
+                    PasswordUtility.hashPassword(Password.ADMIN_PASSWORD), ""
+                );
             }
             return null;
         }
@@ -104,7 +95,7 @@ public class PasswordManager {
             }
             
             // Verify password hash matches stored hash
-            if (user.getHashedPassword().equals(PasswordUtils.hashPassword(password))) {
+            if (user.getHashedPassword().equals(PasswordUtility.hashPassword(password))) {
                 return user;
             }
         }
@@ -122,21 +113,28 @@ public class PasswordManager {
      */
     public boolean changePassword(Password user, String currentPassword, String newPassword, String confirmPassword) {
         // Step 1: Verify current password is correct
-        if (!user.getHashedPassword().equals(PasswordUtils.hashPassword(currentPassword))) {
+        if (!user.getHashedPassword().equals(PasswordUtility.hashPassword(currentPassword))) {
+        	
+        	SceneController.showErrorAlert("Current password doesnt match Old password.");
             return false;
         }
 
         // Step 2: Check if new password was used before (from history)
-        if (user.checkPasswordInHistory(PasswordUtils.hashPassword(newPassword))) {
+        if (user.checkPasswordInHistory(PasswordUtility.hashPassword(newPassword))) {
+        	SceneController.showErrorAlert("Enter a new password. Password entered matches recent password");
             return false;
         }
 
         // Step 3: Verify new password and confirmation match
         if (newPassword.equals(confirmPassword)) {
             // Step 4: Update password and save to file
-            user.setHashedPassword(PasswordUtils.hashPassword(newPassword));
-            UserFileManager.saveUser(user);
+            user.setHashedPassword(PasswordUtility.hashPassword(newPassword));
+            UserFileManager.updateUser(user);
+            SceneController.showSuccessAlert("Password Updated Successfully!");
             return true;
+        }else {
+        	SceneController.showErrorAlert("Password confirmation failed.");
+        
         }
         return false;
     }
@@ -153,13 +151,14 @@ public class PasswordManager {
         Password user = UserFileManager.findUserByName(firstName, lastName);
         if (user != null) {
             // Step 2: Generate a secure random password
-            String newPassword = PasswordUtils.generateRandomPassword();
-            
+            String newPassword = PasswordUtility.generateRandomPassword();
+
             // Step 3: Email the new password to user
             if (Email.sendNewPassword(user.getEmail(), newPassword)) {
                 // Step 4: Update password in system
-                user.setHashedPassword(PasswordUtils.hashPassword(newPassword));
-                UserFileManager.saveUser(user);
+                user.setHashedPassword(PasswordUtility.hashPassword(newPassword));
+                //step 5: save changes
+                UserFileManager.updateUser(user);
                 return true;
             }
         }
@@ -173,13 +172,30 @@ public class PasswordManager {
      * @param newPassword New password to set
      * @return true if password was reset successfully, false otherwise
      */
-    public boolean adminChangeCustomerPassword(String email, String newPassword) {
+    public boolean adminChangeCustomerPassword(String email, String newPassword, String confirmPassword) {
+    	//ensures that all field are filled before form is submitted.
+    	if(email.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+			SceneController.showErrorAlert("No fields should be empty!");
+			return false;
+		}
+    	//checks to ensure that the password entered matches with confirm password.
+	    if (!newPassword.equals(confirmPassword)) {
+	        SceneController.showErrorAlert("Passwords do not match");
+	        return false;
+	    }
         // Step 1: Load user and verify they're a regular user (not admin)
         Password customer = UserFileManager.loadUser(email);
+        
         if (customer != null && customer.getUserType() == Password.LoginStatus.USER) {
+        	
+        	// check to ensure that the password entered matches the restrictions.
+    	    if (!PasswordUtility.validatePasswordComplexity(newPassword)) {
+    	        SceneController.showErrorAlert("Password must be at least 8 characters with uppercase, lowercase, number, and special character");
+    	        return false;
+    	    }
             // Step 2: Update password directly (no current password required for admin)
-            customer.setHashedPassword(PasswordUtils.hashPassword(newPassword));
-            UserFileManager.saveUser(customer);
+            customer.setHashedPassword(PasswordUtility.hashPassword(newPassword));
+            UserFileManager.updateUser(customer);
             return true;
         }
         return false;

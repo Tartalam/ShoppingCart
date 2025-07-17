@@ -1,5 +1,6 @@
 package Application;
 
+
 public class Node<T> {
     
 	private T data;

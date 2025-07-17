@@ -154,14 +154,60 @@ public class ShoppingCart {
      */
     @SuppressWarnings("unchecked")
     private void loadFromFile() {
-        try (ObjectInputStream cartIn = new ObjectInputStream(new FileInputStream(CART_FILE));
-             ObjectInputStream stackIn = new ObjectInputStream(new FileInputStream(STACK_FILE))) {
-            cart = (Map<Integer, Integer>) cartIn.readObject();
-            operationStack = (Stack<CartOperation>) stackIn.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            // Initialize fresh cart if no saved data exists
-            cart = new HashMap<>();
-            operationStack = new Stack<>();
+    	 File cartFile = new File(CART_FILE);
+    	    File stackFile = new File(STACK_FILE);
+    	    
+    	    if (!cartFile.exists() || !stackFile.exists()) {
+    	        cart = new HashMap<>();
+    	        operationStack = new Stack<>();
+    	        return;
+    	    }
+
+    	    try (ObjectInputStream cartIn = new ObjectInputStream(new FileInputStream(cartFile));
+    	         ObjectInputStream stackIn = new ObjectInputStream(new FileInputStream(stackFile))) {
+    	        cart = (Map<Integer, Integer>) cartIn.readObject();
+    	        operationStack = (Stack<CartOperation>) stackIn.readObject();
+    	    } catch (IOException | ClassNotFoundException e) {
+    	        System.err.println("Failed to load cart state: " + e.getMessage());
+    	        cart = new HashMap<>();
+    	        operationStack = new Stack<>();
+    	    } catch (ClassCastException e) {
+    	        System.err.println("Cart data corruption detected: " + e.getMessage());
+    	        cart = new HashMap<>();
+    	        operationStack = new Stack<>();
+    	    }
+    }
+    
+    public boolean updateQuantity(int productId, int newQuantity) {
+        if (newQuantity <= 0) {
+            return removeFromCart(productId);
         }
+        
+        if (!cart.containsKey(productId)) {
+            return false;
+        }
+        
+        Product product = catalog.get(productId);
+        if (product == null) {
+            return false;
+        }
+        
+        int currentQuantity = cart.get(productId);
+        int difference = newQuantity - currentQuantity;
+        
+        if (difference > 0) {
+            // Adding more items
+            if (product.getStockQuantity() < difference) {
+                return false;
+            }
+            product.decreaseStock(difference);
+        } else {
+            // Removing items
+            product.increaseStock(-difference);
+        }
+        
+        cart.put(productId, newQuantity);
+        saveToFile();
+        return true;
     }
 }

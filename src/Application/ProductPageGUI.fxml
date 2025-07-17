@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
@@ -29,7 +30,7 @@
                         <Cursor fx:constant="NONE" />
                      </cursor>
                   </ImageView>
-                  <Label layoutX="37.0" layoutY="567.0" prefHeight="39.0" prefWidth="329.0" text="Low Stock # remaining" textFill="#b92d2d">
+                  <Label fx:id="stockLabel" layoutX="37.0" layoutY="567.0" prefHeight="39.0" prefWidth="386.0" textFill="#b92d2d">
                      <font>
                         <Font name="Arial" size="15.0" />
                      </font>
@@ -40,7 +41,7 @@
                <children>
                   <Pane prefHeight="98.0" prefWidth="576.0">
                      <children>
-                        <Label layoutX="2.0" layoutY="-2.0" prefHeight="102.0" prefWidth="571.0" text="Product Name">
+                        <Label fx:id="nameLabel" layoutX="2.0" layoutY="-2.0" prefHeight="102.0" prefWidth="571.0">
                            <font>
                               <Font name="Arial Bold" size="22.0" />
                            </font>
@@ -54,7 +55,7 @@
                               <Font name="Arial" size="22.0" />
                            </font>
                         </Label>
-                        <Label alignment="TOP_LEFT" layoutX="-1.0" layoutY="30.0" prefHeight="240.0" prefWidth="582.0" text="Label">
+                        <Label fx:id="desLabel" alignment="TOP_LEFT" layoutX="-1.0" layoutY="30.0" prefHeight="240.0" prefWidth="582.0">
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
@@ -66,17 +67,17 @@
                   </Pane>
                   <Pane prefHeight="103.0" prefWidth="576.0">
                      <children>
-                        <Label layoutX="30.0" layoutY="26.0" prefHeight="54.0" prefWidth="74.0" text="Price: $">
+                        <Label layoutX="30.0" layoutY="26.0" prefHeight="54.0" prefWidth="62.0" text="Price:">
                            <font>
                               <Font name="Arial Bold" size="19.0" />
                            </font>
                         </Label>
-                        <Label layoutX="104.0" layoutY="30.0" prefHeight="47.0" prefWidth="115.0" text="Label">
+                        <Label fx:id="priceLabel" layoutX="85.0" layoutY="30.0" prefHeight="47.0" prefWidth="119.0">
                            <font>
                               <Font name="Arial Bold" size="16.0" />
                            </font>
                         </Label>
-                        <Spinner editable="true" layoutX="466.0" layoutY="34.0" prefHeight="38.0" prefWidth="67.0" />
+                        <Spinner fx:id="quantitySpinner" editable="true" layoutX="466.0" layoutY="34.0" prefHeight="38.0" prefWidth="67.0" />
                         <Label layoutX="377.0" layoutY="42.0" text="Quantity: ">
                            <font>
                               <Font name="Arial Bold" size="19.0" />
@@ -86,7 +87,7 @@
                   </Pane>
                   <Pane prefHeight="101.0" prefWidth="576.0">
                      <children>
-                        <Button alignment="CENTER" layoutX="156.0" layoutY="20.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="264.0" text="Add To Cart">
+                        <Button fx:id="cartButton" alignment="CENTER" layoutX="156.0" layoutY="20.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="264.0" text="Add To Cart">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -105,7 +106,7 @@
    <top>
       <AnchorPane prefHeight="125.0" prefWidth="200.0" style="-fx-background-color: #465E75;" BorderPane.alignment="CENTER">
          <children>
-            <TextField layoutX="67.0" layoutY="43.0" maxWidth="1000.0" minWidth="200.0" prefHeight="40.0" prefWidth="500.0" promptText="Search" AnchorPane.leftAnchor="67.0" AnchorPane.rightAnchor="526.0">
+            <TextField fx:id="searchTextField" layoutX="67.0" layoutY="43.0" maxWidth="1000.0" minWidth="200.0" onKeyPressed="#ProductSearchKey" prefHeight="40.0" prefWidth="500.0" promptText="Search" AnchorPane.leftAnchor="67.0" AnchorPane.rightAnchor="526.0">
                <cursor>
                   <Cursor fx:constant="TEXT" />
                </cursor>
@@ -113,7 +114,7 @@
                   <Font name="Arial" size="14.0" />
                </font>
             </TextField>
-            <Button contentDisplay="GRAPHIC_ONLY" layoutX="567.0" layoutY="43.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="476.0">
+            <Button fx:id="submitButton" contentDisplay="GRAPHIC_ONLY" layoutX="567.0" layoutY="43.0" mnemonicParsing="false" onAction="#ProductSearch" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="476.0">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -141,11 +142,11 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <Label alignment="CENTER" layoutX="1029.0" layoutY="26.0" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-border-color: grey; -fx-border-radius: 20;" text="1" textFill="#0c2897" AnchorPane.rightAnchor="30.0">
+            <Label fx:id="cartAmountLabel" alignment="CENTER" layoutX="1029.0" layoutY="26.0" prefHeight="34.0" prefWidth="34.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-border-color: grey; -fx-border-radius: 20;" textFill="#0c2897" AnchorPane.rightAnchor="30.0">
                <font>
                   <Font name="Bodoni MT" size="18.0" />
                </font></Label>
-            <Label alignment="CENTER" layoutX="889.0" layoutY="100.0" prefHeight="23.0" prefWidth="99.0" text="user" AnchorPane.rightAnchor="105.0">
+            <Label fx:id="userLabel" alignment="CENTER" layoutX="889.0" layoutY="106.0" prefHeight="17.0" prefWidth="99.0" text="user" AnchorPane.rightAnchor="105.0">
                <font>
                   <Font name="Arial" size="12.0" />
                </font>
@@ -153,7 +154,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="736.0" layoutY="27.0" onMouseClicked="#switchToResetPasswordPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="285.0">
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="736.0" layoutY="27.0" onMouseClicked="#selectResetPasswordPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="285.0">
                <image>
                   <Image url="@../images/reset-password.png" />
                </image>
@@ -161,7 +162,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="642.0" layoutY="27.0" onMouseClicked="#switchToProductManagementPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="379.0">
+            <ImageView fx:id="productManagerImage" fitHeight="72.0" fitWidth="83.0" layoutX="642.0" layoutY="27.0" onMouseClicked="#switchToProductManagementPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="379.0">
                <image>
                   <Image url="@../images/project.png" />
                </image>
@@ -169,7 +170,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <Label alignment="CENTER" layoutX="729.0" layoutY="100.0" prefHeight="23.0" prefWidth="86.0" text="Reset" AnchorPane.rightAnchor="278.0">
+            <Label alignment="CENTER" layoutX="729.0" layoutY="103.0" prefHeight="23.0" prefWidth="86.0" text="Reset" AnchorPane.rightAnchor="278.0">
                <font>
                   <Font name="Arial" size="12.0" />
                </font>
@@ -177,7 +178,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <Label alignment="CENTER" layoutX="622.0" layoutY="100.0" prefHeight="23.0" prefWidth="111.0" text="Product manager" AnchorPane.rightAnchor="360.0">
+            <Label fx:id="productManagerLabel" alignment="CENTER" layoutX="623.0" layoutY="103.0" prefHeight="23.0" prefWidth="111.0" text="Product manager" AnchorPane.rightAnchor="359.0">
                <font>
                   <Font name="Arial" size="12.0" />
                </font>
@@ -185,7 +186,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Label>
-            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="824.0" layoutY="27.0" onMouseClicked="#switchToOrderProccessingPage" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="72.0" fitWidth="83.0" layoutX="824.0" layoutY="27.0" onMouseClicked="#switchToOrderProccessingPage" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="197.0">
                <image>
                   <Image url="@../images/queue.png" />
                </image>
@@ -193,7 +194,17 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <Label layoutX="842.0" layoutY="103.0" text="Queue" />
+            <Label layoutX="842.0" layoutY="106.0" text="Queue" AnchorPane.rightAnchor="215.0" />
+            <Label fx:id="searchLabel" layoutX="67.0" layoutY="11.0" prefHeight="32.0" prefWidth="398.0" textFill="#dd382f">
+               <font>
+                  <Font name="Bodoni MT" size="15.0" />
+               </font>
+            </Label>
+            <Hyperlink fx:id="logoutHyperLink" alignment="CENTER" layoutX="909.0" layoutY="90.0" onMouseClicked="#handleLogout" prefHeight="0.0" prefWidth="59.0" text="Logout" underline="true">
+               <font>
+                  <Font name="Baskerville Old Face" size="12.0" />
+               </font>
+            </Hyperlink>
          </children>
       </AnchorPane>
    </top>

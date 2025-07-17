@@ -59,4 +59,24 @@ public class QueueNode {
 	public void setData(OrderNumber data) {
 		this.data = data;
 	}
+	
+	 @Override
+	    public String toString() {
+	        return String.valueOf(data.getOrderNumber());
+	    }
+	    
+	    // Add a static method to create QueueNode from string
+	    public static QueueNode fromString(String str) {
+	        if (str == null || str.trim().isEmpty()) {
+	            return null;
+	        }
+	        try {
+	            int orderNumber = Integer.parseInt(str.trim());
+	            return new QueueNode(orderNumber);
+	        } catch (NumberFormatException e) {
+	            return null;
+	        }catch(Exception e) {
+	        	return null;
+	        }
+	    }
 }

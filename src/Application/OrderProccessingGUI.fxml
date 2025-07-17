@@ -17,12 +17,12 @@
    <top>
       <AnchorPane prefHeight="125.0" prefWidth="200.0" style="-fx-background-color: #465E75;" BorderPane.alignment="CENTER">
          <children>
-            <TextField layoutX="80.0" layoutY="45.0" maxWidth="600.0" minWidth="150.0" prefHeight="40.0" prefWidth="300.0" promptText="Search" translateZ="31.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="672.0">
+            <TextField fx:id="searchTextField" layoutX="80.0" layoutY="45.0" maxWidth="600.0" minWidth="150.0" prefHeight="40.0" prefWidth="300.0" promptText="Search" translateZ="31.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="672.0">
                <font>
                   <Font name="Arial" size="14.0" />
                </font>
             </TextField>
-            <Button contentDisplay="GRAPHIC_ONLY" layoutX="380.0" layoutY="45.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="622.0">
+            <Button fx:id="submitButton" contentDisplay="GRAPHIC_ONLY" layoutX="380.0" layoutY="45.0" mnemonicParsing="false" onAction="#OrderPosition" prefHeight="40.0" prefWidth="50.0" text="Button" AnchorPane.rightAnchor="622.0">
                <graphic>
                   <ImageView fitHeight="30.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -33,6 +33,11 @@
             <Label alignment="CENTER" layoutX="566.0" layoutY="29.0" prefHeight="67.0" prefWidth="316.0" text="Order Proccessing" AnchorPane.rightAnchor="170.0">
                <font>
                   <Font name="Arial Bold" size="27.0" />
+               </font>
+            </Label>
+            <Label fx:id="searchLabel" layoutX="80.0" layoutY="13.0" prefHeight="32.0" prefWidth="398.0" textFill="#dd382f">
+               <font>
+                  <Font name="Bodoni MT" size="15.0" />
                </font>
             </Label>
          </children>
@@ -53,22 +58,22 @@
                                  <children>
                                     <Pane layoutX="159.0" layoutY="30.0" maxHeight="438.0" maxWidth="333.0" prefHeight="438.0" prefWidth="333.0" style="-fx-background-color: #f8f8f8;" AnchorPane.leftAnchor="159.0" AnchorPane.rightAnchor="159.0" AnchorPane.topAnchor="30.0">
                                        <children>
-                                          <Label alignment="CENTER" layoutX="97.0" layoutY="25.0" prefHeight="41.0" prefWidth="108.0" text="Queue">
+                                          <Label alignment="CENTER" layoutX="24.0" layoutY="27.0" prefHeight="41.0" prefWidth="285.0" text="Queue Position">
                                              <font>
                                                 <Font name="Arial Bold" size="24.0" />
                                              </font>
                                           </Label>
-                                          <Label alignment="CENTER" contentDisplay="CENTER" layoutX="99.0" layoutY="58.0" prefHeight="70.0" prefWidth="104.0" text="Number">
+                                          <Label fx:id="queuePositionLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="43.0" layoutY="96.0" prefHeight="188.0" prefWidth="247.0">
                                              <font>
-                                                <Font name="Arial Bold" size="22.0" />
+                                                <Font name="Algerian" size="62.0" />
                                              </font>
                                           </Label>
-                                          <Button layoutX="91.0" layoutY="335.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="120.0" style="-fx-background-color: #6F7A8A;" text="Delivered" textFill="WHITE">
+                                          <Button fx:id="deliverButton" layoutX="107.0" layoutY="337.0" mnemonicParsing="false" onAction="#OrderDelivery" prefHeight="52.0" prefWidth="120.0" style="-fx-background-color: #6F7A8A;" text="Delivered" textFill="WHITE">
                                              <font>
                                                 <Font name="Arial Rounded MT Bold" size="16.0" />
                                              </font>
                                           </Button>
-                                          <Hyperlink alignment="CENTER" layoutX="127.0" layoutY="401.0" onMouseClicked="#switchToMainPage" prefHeight="23.0" prefWidth="49.0" text="Return" underline="true">
+                                          <Hyperlink alignment="CENTER" layoutX="143.0" layoutY="401.0" onMouseClicked="#switchToMainPage" prefHeight="23.0" prefWidth="49.0" text="Return" underline="true">
                                              <font>
                                                 <Font name="Arial" size="13.0" />
                                              </font>
