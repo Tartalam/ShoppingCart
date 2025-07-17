@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Spinner;
@@ -73,6 +74,10 @@ public class SceneController {
 	@FXML private TextField firstNameTextField;
 	@FXML private TextField lastNameTextField;
 	@FXML private TextField verificationTextField;
+	@FXML private PasswordField oldPasswordPasswordField;
+	@FXML private ImageView productManagerImage;
+	@FXML private Label productManagerLabel;
+	@FXML private Hyperlink logoutHyperLink;
 
 
 	
@@ -123,7 +128,7 @@ public class SceneController {
 	
 	//switch to the reset password page.
 	public void switchToResetPasswordPage(MouseEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("ChangeOldPasswordGUI.fxml"));
+		root = FXMLLoader.load(getClass().getResource("ResetPasswordGUI.fxml"));
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		scene = new Scene(root);
 		stage.setScene(scene);
@@ -174,6 +179,15 @@ public class SceneController {
 	// switch to product management page.
 	public void switchToProductManagementPage(MouseEvent event) throws IOException{
 		root = FXMLLoader.load(getClass().getResource("ProductManagementGUI.fxml"));
+		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(root);
+		stage.setScene(scene);
+		stage.show();
+		
+	}
+	
+	public void switchToAdminChangePasswordPage(MouseEvent event) throws IOException{
+		root = FXMLLoader.load(getClass().getResource("AdminPasswordChangeGUI.fxml"));
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		scene = new Scene(root);
 		stage.setScene(scene);
@@ -1122,6 +1136,7 @@ public class SceneController {
 	    
 	    if (user == null) {
 	        handleNoUserState();
+	        updateAdminElementsVisibility();
 	        return;
 	    }
 	    
@@ -1137,7 +1152,7 @@ public class SceneController {
 	        case USER:
 	            if (userLabel != null) {
 	                userLabel.setText(user.getFirstName());
-	                userLabel.setStyle("-fx-text-fill: #0000FF;"); // Blue color for regular user
+	                userLabel.setStyle("-fx-text-fill: #D8D8D8;"); // Blue color for regular user
 	            }
 	            enableUserFunctionality(true);
 	            break;
@@ -1147,6 +1162,8 @@ public class SceneController {
 	            handleNoUserState();
 	            break;
 	    }
+	    
+	    updateAdminElementsVisibility();
 	}
 
 	/**
@@ -1338,7 +1355,12 @@ public class SceneController {
 		
 		//get first and last name from text fields
 		String firstName = firstNameTextField.getText().trim();	
-		String lastName = lastNameTextField.getText().trim();	
+		String lastName = lastNameTextField.getText().trim();
+		
+		if (firstName.isEmpty() || lastName.isEmpty()) {
+			showErrorAlert("Need first and last name to generate a new password!");
+		}
+		
 		
 		PasswordManager forgotPassword = new PasswordManager();
 		
@@ -1352,7 +1374,110 @@ public class SceneController {
 		
 	}
 	
+	public void resetPassword(MouseEvent event)throws IOException{
+		
+		String oldPassword = oldPasswordPasswordField.getText();
+		String newPassword = passwordTextField.getText();
+		String confirmPassword = confirmPasswordTextField.getText();
+		
+		if(oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+			showErrorAlert("No fields should be empty!");
+		}
+		
+		new PasswordManager().changePassword(Main.getCurrentUser(), oldPassword, newPassword, confirmPassword);
+		
+		// Clear current user
+	    Main.setCurrentUser(null);
+	    
+	    // Update UI to no user state
+	    updateUIForCurrentUser();
+	    
+	 // Clear any sensitive fields
+	    if (oldPasswordPasswordField != null) oldPasswordPasswordField.clear();
+	    if (passwordTextField != null) passwordTextField.clear();
+	    if (confirmPasswordTextField != null) confirmPasswordTextField.clear();
+	    
+	    // Show logout confirmation
+	    showSuccessAlert("Password updated successfully please log in again.");
+	    
+	    switchToMainPage(event);
+		
+	}
 	
+	// changes the reset password page based on user state.
+	public void selectResetPasswordPage(MouseEvent event)throws IOException{
+		Password currentUser = Main.getCurrentUser();
+	    
+	    if (currentUser == null || currentUser.getUserType() == Password.LoginStatus.NO_USER) {
+	        // No action for NO_USER state
+	        return;
+	    }
+	    
+	    switch (currentUser.getUserType()) {
+	        case ADMIN:
+	            // Show admin password change page
+	            switchToAdminChangePasswordPage(event);
+	            break;
+	            
+	        case USER:
+	            // Show regular user reset password page
+	            switchToResetPasswordPage(event);
+	            break;
+	            
+	        case NO_USER:
+	        default:
+	            // No action
+	            break;
+	    }
+		
+		
+	}
+	
+	public void adminResetUserPassword(MouseEvent event)throws IOException{
+		String email = emailTextField.getText().trim();
+		String password = passwordTextField.getText();
+		String confirmPassword = confirmPasswordTextField.getText();
+		
+		
+		if(new PasswordManager().adminChangeCustomerPassword(email, password, confirmPassword)) {
+			emailTextField.clear();
+			passwordTextField.clear();
+			confirmPasswordTextField.clear();
+			showSuccessAlert("User Password has been updated successfully");
+			
+			switchToMainPage(event);
+
+			
+		}else {
+			showErrorAlert("Failed to update user password.");
+		}
+	}
+	
+	/**
+     * Updates visibility and interactability of admin-specific elements
+     */
+    private void updateAdminElementsVisibility() {
+        boolean isAdmin = Main.getCurrentUser() != null && 
+                         Main.getCurrentUser().getUserType() == Password.LoginStatus.ADMIN;
+        boolean isUser = Main.getCurrentUser() == null || Main.getCurrentUser().getUserType()
+        				 == Password.LoginStatus.NO_USER;
+        
+        if (productManagerImage != null) {
+            productManagerImage.setVisible(isAdmin);
+            productManagerImage.setDisable(!isAdmin);
+        }
+        
+        if (productManagerLabel != null) {
+            productManagerLabel.setVisible(isAdmin);
+            productManagerLabel.setDisable(!isAdmin);
+        }
+        
+        if(logoutHyperLink != null) {
+        	logoutHyperLink.setVisible(!isUser);
+        	logoutHyperLink.setDisable(isUser);
+        }
+        
+    }
 	
 	/**
 	 * Configures the quantity spinner with proper limits
@@ -1434,7 +1559,7 @@ public class SceneController {
 	        }
 	    }
 	 
-	 private void showSuccessAlert(String message) {
+	 public static void showSuccessAlert(String message) {
 		    Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		    alert.setTitle("Success");
 		    alert.setHeaderText(null);
@@ -1442,7 +1567,7 @@ public class SceneController {
 		    alert.showAndWait();
 		}
 	 
-	 private void showErrorAlert(String message) {
+	 public static void showErrorAlert(String message) {
 		    Alert alert = new Alert(Alert.AlertType.ERROR);
 		    alert.setTitle("Error");
 		    alert.setHeaderText(null);

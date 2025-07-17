@@ -124,6 +124,9 @@ public class UserFileManager {
     	                line = user.getFirstName() + "," + user.getLastName() + "," +
     	                      user.getEmail() + "," + user.getUserType() + "," +
     	                      user.getHashedPassword() + "," + history;
+    	            	 history = (parts.length > 5) ? parts[5] : 
+                            String.join(";", user.getPasswordHistory());
+    	            		line = user.toString(); // This now includes current history
     	            }
     	            lines.add(line);
     	        }
