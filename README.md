@@ -19,7 +19,8 @@ bash
 
 git clone https://github.com/yourusername/yourrepository.git
 cd yourrepository
-##3. Import into Eclipse IDE with Maven
+
+## 2. Import into Eclipse IDE with Maven
 Open Eclipse.
 
 Go to File → Import → Maven → Existing Maven Projects.
