@@ -19,7 +19,7 @@ bash
 
 git clone https://github.com/yourusername/yourrepository.git
 cd yourrepository
-3. Import into Eclipse IDE with Maven
+##3. Import into Eclipse IDE with Maven
 Open Eclipse.
 
 Go to File → Import → Maven → Existing Maven Projects.
@@ -28,7 +28,7 @@ Select the root directory of your cloned repository.
 
 Click Finish to import the project.
 
-3. Configure VM Arguments for JavaFX
+##3. Configure VM Arguments for JavaFX
 Since the dependencies (including JavaFX) are managed in pom.xml, you only need to add the required modules via VM arguments.
 
 For Windows:
@@ -47,7 +47,7 @@ Click Apply and then Run.
 For Linux:
 The process is the same as Windows, but ensure JavaFX is properly installed (if not using Maven dependencies).
 
-4. Run the Project
+##4. Run the Project
 Right-click the project → Run As → Java Application (or use Maven commands).
 
 Alternatively, via command line (with Maven):
