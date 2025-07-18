@@ -100,11 +100,15 @@ public class SceneController {
 	
 	// Switch to the page to add product.
 	public void switchToAddProductPage(ActionEvent event) throws IOException{
-		root = FXMLLoader.load(getClass().getResource("AddProductGUI.fxml"));
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(root);
-		stage.setScene(scene);
-		stage.show();
+		 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		    FXMLLoader loader = new FXMLLoader(getClass().getResource("AddProductGUI.fxml"));
+		    Parent root = loader.load();
+		    
+		    // Get the controller if needed (though you might not need it here)
+		    SceneController controller = loader.getController();
+		    
+		    stage.setScene(new Scene(root));
+		    stage.show();
 	}
 	   
 		
