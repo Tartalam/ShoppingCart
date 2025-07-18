@@ -32,6 +32,7 @@ public class ShoppingCart {
     public boolean addToCart(int productId, int quantity) {
         Product productItem = catalog.get(productId);
         if (productItem == null || productItem.getStockQuantity() < quantity) {
+        	SceneController.showErrorAlert("Not enough in stock to order");
             return false;
         }
 

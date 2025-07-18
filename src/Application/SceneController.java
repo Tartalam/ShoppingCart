@@ -615,7 +615,6 @@ public class SceneController {
 	public void populateMainPage() {
 		
 		updateUIForCurrentUser();
-		 System.out.println("[DEBUG] populateMainPage() called");
 		    
 		    if (productsFlowPane == null) {
 		        System.err.println("ERROR: productsFlowPane is null!");
@@ -669,6 +668,9 @@ public class SceneController {
 		                        showSuccessAlert("Added to cart: " + product.getName());
 		                    }
 		                });
+		                
+		                buttonState(cartButton);
+		                
 		            }
 
 		            productsFlowPane.getChildren().add(productCard);
@@ -682,7 +684,10 @@ public class SceneController {
 	
 
 	public void populateCartPage(){
-		 System.out.println("[DEBUG] populateCartPage() called");
+		
+		 Button button = new Button();
+		 button = orderButton;
+		 buttonState(button);
 		    
 		    // Clear existing items
 		    if (cartTilePane == null) {
@@ -945,6 +950,10 @@ public class SceneController {
 		            
 		            // Update product stock in catalog (quantity already deducted by ShoppingCart)
 		            Product product = catalogManager.searchProduct(productId);
+		            if(product.getStockQuantity() < quantity) {
+		            	showErrorAlert("Order amount exceed stock quantity of it " + product.getName());
+		            	return;
+		            }
 		            if (product != null) {
 		                // Update the product in the file
 		                new ProductFileManager().updateProductInFile(product);
@@ -1170,6 +1179,40 @@ public class SceneController {
 	    
 	    updateAdminElementsVisibility();
 	}
+/*
+ * Update the state of the button to either disabled or enabled based on the user type
+ * @param get a button parameter to change its state.
+ */
+	
+	public void buttonState(Button button) {
+		try {
+			Password user = new Password();
+				user = Main.getCurrentUser();
+		
+				if(user == null) {
+					button.setDisable(true);
+					return;
+				}
+		
+				switch(user.getUserType()) {
+				case ADMIN:
+					button.setDisable(false);
+					break;
+				case USER:
+					button.setDisable(false);
+					break;
+				case NO_USER:
+					button.setDisable(true);
+					break;
+				default:
+					button.setDisable(true);
+		}
+		}catch(Exception e) {
+			System.err.println("Couldnt disable button function. " + e.getMessage());
+			e.printStackTrace();
+			
+		}
+	}
 
 	/**
 	 * Handles UI updates for no user state (logged out)
@@ -1195,6 +1238,7 @@ public class SceneController {
 	    if (orderButton != null) {
 	        orderButton.setDisable(!enabled);
 	    }
+	    
 	    
 	    // Add other user-specific UI controls here
 	}
