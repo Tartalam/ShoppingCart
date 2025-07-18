@@ -1,3 +1,5 @@
+// Author: Jahmari Harrison
+// ID: 2304204
 package Application;
 
 public class QueueNode {

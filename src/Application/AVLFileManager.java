@@ -1,4 +1,5 @@
-// AVLFileManager.java
+// Author: Jahmari Harrison
+// ID: 2304204
 package Application;
 
 import java.io.*;
