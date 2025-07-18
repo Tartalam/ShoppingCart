@@ -1,11 +1,13 @@
 # Shopping Cart GUI
 
-**Description**: (Add a brief description of your project here.)
+**Description**: Java GUI Application that emulates an online webStore. Thsi includes cart functionality, 
+panels to show the items on the home page, and an order queue delivery function to name a few.
+
 
 ---
 
 ## 🚀 Prerequisites
-- Java JDK 11+
+- Java JDK 16+
 - Maven 3.6+
 - Eclipse IDE (or any IDE with Maven support)
 - JavaFX SDK (if not using the Maven dependency)
